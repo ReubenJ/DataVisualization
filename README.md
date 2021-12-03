@@ -13,3 +13,6 @@ express.js backend
 ## Helpful resources
 https://github.com/thelinmichael/spotify-web-api-node
 A wrapper/client for the official Spotify API. Makes stuff a lot easier to use
+
+https://www.youtube.com/watch?v=Bk90lT6ne3g
+Example on how to use spotify-web-api-node
