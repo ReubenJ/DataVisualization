@@ -2,6 +2,8 @@ var SpotifyWebApi = require('spotify-web-api-node');
 const express = require('express')
 var cors = require('cors');
 
+const fs = require('fs');
+
 // This file is copied from: https://github.com/thelinmichael/spotify-web-api-node/blob/master/examples/tutorial/00-get-access-token.js
 
 const scopes = [
@@ -25,13 +27,16 @@ const scopes = [
     'user-follow-read',
     'user-follow-modify'
   ];
-  
+
+// let client_id = '2952289f1dcc4380bbec371dfbfce131';
+// let client_secret = '56d8f3d3af3848c1a5f365efa6339593';
+
 // credentials are optional
 var spotifyApi = new SpotifyWebApi({
     clientId: '2952289f1dcc4380bbec371dfbfce131',
     clientSecret: '56d8f3d3af3848c1a5f365efa6339593',
     redirectUri: 'http://localhost:8888/callback'
-  });
+});
   
 
 // Setup/initializing
@@ -49,7 +54,6 @@ app.get('/callback', (req, res) => {
   const error = req.query.error;
   const code = req.query.code;
   const state = req.query.state;
-
   if (error) {
     console.error('Callback Error:', error);
     res.send(`Callback Error: ${error}`);
@@ -89,7 +93,6 @@ app.get('/callback', (req, res) => {
     });
 });
 
-
 // Get data about current logged-in user
 app.get('/me_info', (req, res) => {
   spotifyApi.getMe().then(
@@ -99,11 +102,60 @@ app.get('/me_info', (req, res) => {
   )
 });
 
+// Get all the data we need
+app.get('/data', (req, res) => {
+  // Personal data
+  //var my_data = spotifyApi.getMe();
+  //var my_topArtists = spotifyApi.getMyTopArtists();
+  //var my_topSongs = spotifyApi.getMyTopTracks();
+  //var my_playlists = spotifyApi.getUserPlaylists();
+
+  // Global data
+  //var categories = spotifyApi.getCategories();
+
+  // Get { playlist_name: playlist_data }
+  spotifyApi.getUserPlaylists().then((res) => {
+    // Store playlist info api calls as promises
+    let promises = [];
+    res.body.items.forEach((obj) => {
+      let playlist_id = obj.href.substring(obj.href.lastIndexOf('/') + 1, obj.href.length);
+      promises.push(spotifyApi.getPlaylistTracks(playlist_id));
+    });
+
+    // Unpack everything
+    let data = []
+    Promise.all(promises).then((playlists) => {
+      for (var playlist in playlists) {
+        song_data = []
+        for (var song_idx in playlists[playlist].body.items) {
+            let song = playlists[playlist].body.items[song_idx];
+            song_data.push({ 
+                'album_name': song.track.album.name,
+                'artists': song.track.artists[0].name,
+                'song_name': song.track.name,
+                'popularity': song.track.popularity
+            });
+        }
+        
+        data.push({
+          'name': res.body.items[playlist].name,
+          'songs': song_data
+        });
+      }
+
+      fs.writeFile('playlists_data.json', JSON.stringify(data), (err) => {
+        if (err) console.log(err);
+      });
+    });
+  }); 
+})
+
 
 app.listen(8888, () =>
   console.log(
     'HTTP Server up. Now go to http://localhost:8888/login in your browser.'
   )
 );
+
 
 

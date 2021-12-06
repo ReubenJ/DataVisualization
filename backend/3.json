@@ -1,0 +1,336 @@
+{
+    "body": {
+        "href": "https://api.spotify.com/v1/users/11139998755/playlists?offset=0&limit=20",
+        "items": [
+            {
+                "collaborative": false,
+                "description": "Spotify Wrapped presents the songs that you loved most this year.",
+                "external_urls": {
+                    "spotify": "https://open.spotify.com/playlist/37i9dQZF1EUMDoJuT8yJsl"
+                },
+                "href": "https://api.spotify.com/v1/playlists/37i9dQZF1EUMDoJuT8yJsl",
+                "id": "37i9dQZF1EUMDoJuT8yJsl",
+                "images": [
+                    {
+                        "height": null,
+                        "url": "https://lineup-images.scdn.co/wrapped-2021-top100_LARGE-en.jpg",
+                        "width": null
+                    }
+                ],
+                "name": "Your Top Songs 2021",
+                "owner": {
+                    "display_name": "Spotify",
+                    "external_urls": {
+                        "spotify": "https://open.spotify.com/user/spotify"
+                    },
+                    "href": "https://api.spotify.com/v1/users/spotify",
+                    "id": "spotify",
+                    "type": "user",
+                    "uri": "spotify:user:spotify"
+                },
+                "primary_color": null,
+                "public": false,
+                "snapshot_id": "MCwwMDAwMDAwMDJkMmFhNzViNjNkMDVhMDc2NWVmYTBjMmUzZjc2ZTdi",
+                "tracks": {
+                    "href": "https://api.spotify.com/v1/playlists/37i9dQZF1EUMDoJuT8yJsl/tracks",
+                    "total": 101
+                },
+                "type": "playlist",
+                "uri": "spotify:playlist:37i9dQZF1EUMDoJuT8yJsl"
+            },
+            {
+                "collaborative": false,
+                "description": "",
+                "external_urls": {
+                    "spotify": "https://open.spotify.com/playlist/2wZhCGy4RP4nRbhEDXNF3x"
+                },
+                "href": "https://api.spotify.com/v1/playlists/2wZhCGy4RP4nRbhEDXNF3x",
+                "id": "2wZhCGy4RP4nRbhEDXNF3x",
+                "images": [
+                    {
+                        "height": 640,
+                        "url": "https://mosaic.scdn.co/640/ab67616d0000b273072e9faef2ef7b6db63834a3ab67616d0000b2736aca031ccc27d2e4dd829d14ab67616d0000b2737f37a4001ae7d8be430bd91bab67616d0000b273d81a092eb373ded457d94eec",
+                        "width": 640
+                    },
+                    {
+                        "height": 300,
+                        "url": "https://mosaic.scdn.co/300/ab67616d0000b273072e9faef2ef7b6db63834a3ab67616d0000b2736aca031ccc27d2e4dd829d14ab67616d0000b2737f37a4001ae7d8be430bd91bab67616d0000b273d81a092eb373ded457d94eec",
+                        "width": 300
+                    },
+                    {
+                        "height": 60,
+                        "url": "https://mosaic.scdn.co/60/ab67616d0000b273072e9faef2ef7b6db63834a3ab67616d0000b2736aca031ccc27d2e4dd829d14ab67616d0000b2737f37a4001ae7d8be430bd91bab67616d0000b273d81a092eb373ded457d94eec",
+                        "width": 60
+                    }
+                ],
+                "name": "bars",
+                "owner": {
+                    "display_name": "Haoran Xia",
+                    "external_urls": {
+                        "spotify": "https://open.spotify.com/user/11139998755"
+                    },
+                    "href": "https://api.spotify.com/v1/users/11139998755",
+                    "id": "11139998755",
+                    "type": "user",
+                    "uri": "spotify:user:11139998755"
+                },
+                "primary_color": null,
+                "public": false,
+                "snapshot_id": "MTEzLGFkMGRlYzZmN2NjNWVjZjcxZGYxODFmNDdiZDlkZjFhOTE5Y2UzYTY=",
+                "tracks": {
+                    "href": "https://api.spotify.com/v1/playlists/2wZhCGy4RP4nRbhEDXNF3x/tracks",
+                    "total": 99
+                },
+                "type": "playlist",
+                "uri": "spotify:playlist:2wZhCGy4RP4nRbhEDXNF3x"
+            },
+            {
+                "collaborative": false,
+                "description": "",
+                "external_urls": {
+                    "spotify": "https://open.spotify.com/playlist/7mXCpBxFQdG3W5xZi2ch8s"
+                },
+                "href": "https://api.spotify.com/v1/playlists/7mXCpBxFQdG3W5xZi2ch8s",
+                "id": "7mXCpBxFQdG3W5xZi2ch8s",
+                "images": [
+                    {
+                        "height": 640,
+                        "url": "https://mosaic.scdn.co/640/ab67616d0000b2735124ed45a94033830b320500ab67616d0000b2736d70b73bcb327515e9fa8facab67616d0000b273ae6d8e36136353d550b2587dab67616d0000b273c8b444df094279e70d0ed856",
+                        "width": 640
+                    },
+                    {
+                        "height": 300,
+                        "url": "https://mosaic.scdn.co/300/ab67616d0000b2735124ed45a94033830b320500ab67616d0000b2736d70b73bcb327515e9fa8facab67616d0000b273ae6d8e36136353d550b2587dab67616d0000b273c8b444df094279e70d0ed856",
+                        "width": 300
+                    },
+                    {
+                        "height": 60,
+                        "url": "https://mosaic.scdn.co/60/ab67616d0000b2735124ed45a94033830b320500ab67616d0000b2736d70b73bcb327515e9fa8facab67616d0000b273ae6d8e36136353d550b2587dab67616d0000b273c8b444df094279e70d0ed856",
+                        "width": 60
+                    }
+                ],
+                "name": "The good shit",
+                "owner": {
+                    "display_name": "Haoran Xia",
+                    "external_urls": {
+                        "spotify": "https://open.spotify.com/user/11139998755"
+                    },
+                    "href": "https://api.spotify.com/v1/users/11139998755",
+                    "id": "11139998755",
+                    "type": "user",
+                    "uri": "spotify:user:11139998755"
+                },
+                "primary_color": null,
+                "public": false,
+                "snapshot_id": "NTEsNGFjODI4YWVkYTQzZmJkN2EyZTllMzg5YmY0YTA0NzNkMTc1M2E1YQ==",
+                "tracks": {
+                    "href": "https://api.spotify.com/v1/playlists/7mXCpBxFQdG3W5xZi2ch8s/tracks",
+                    "total": 47
+                },
+                "type": "playlist",
+                "uri": "spotify:playlist:7mXCpBxFQdG3W5xZi2ch8s"
+            },
+            {
+                "collaborative": false,
+                "description": "",
+                "external_urls": {
+                    "spotify": "https://open.spotify.com/playlist/72f3XSW6UlDXK8ZHApaE7g"
+                },
+                "href": "https://api.spotify.com/v1/playlists/72f3XSW6UlDXK8ZHApaE7g",
+                "id": "72f3XSW6UlDXK8ZHApaE7g",
+                "images": [
+                    {
+                        "height": 640,
+                        "url": "https://mosaic.scdn.co/640/ab67616d0000b2732aeecde39afd84d3f93d837aab67616d0000b273429afb015054ad073d8a7749ab67616d0000b2734d243f598f9af96da59f3b52ab67616d0000b273ab34ec04dd3073df6d8caef8",
+                        "width": 640
+                    },
+                    {
+                        "height": 300,
+                        "url": "https://mosaic.scdn.co/300/ab67616d0000b2732aeecde39afd84d3f93d837aab67616d0000b273429afb015054ad073d8a7749ab67616d0000b2734d243f598f9af96da59f3b52ab67616d0000b273ab34ec04dd3073df6d8caef8",
+                        "width": 300
+                    },
+                    {
+                        "height": 60,
+                        "url": "https://mosaic.scdn.co/60/ab67616d0000b2732aeecde39afd84d3f93d837aab67616d0000b273429afb015054ad073d8a7749ab67616d0000b2734d243f598f9af96da59f3b52ab67616d0000b273ab34ec04dd3073df6d8caef8",
+                        "width": 60
+                    }
+                ],
+                "name": "fancy shit",
+                "owner": {
+                    "display_name": "Haoran Xia",
+                    "external_urls": {
+                        "spotify": "https://open.spotify.com/user/11139998755"
+                    },
+                    "href": "https://api.spotify.com/v1/users/11139998755",
+                    "id": "11139998755",
+                    "type": "user",
+                    "uri": "spotify:user:11139998755"
+                },
+                "primary_color": null,
+                "public": true,
+                "snapshot_id": "OTUsMWZiZGIzOTJiZTFmZmNkNjMyNmJlYzliMzBkOGJlZDA3YjZhMGI1Ng==",
+                "tracks": {
+                    "href": "https://api.spotify.com/v1/playlists/72f3XSW6UlDXK8ZHApaE7g/tracks",
+                    "total": 67
+                },
+                "type": "playlist",
+                "uri": "spotify:playlist:72f3XSW6UlDXK8ZHApaE7g"
+            },
+            {
+                "collaborative": false,
+                "description": "",
+                "external_urls": {
+                    "spotify": "https://open.spotify.com/playlist/4ut3lguknXTVRFYKuW0xWB"
+                },
+                "href": "https://api.spotify.com/v1/playlists/4ut3lguknXTVRFYKuW0xWB",
+                "id": "4ut3lguknXTVRFYKuW0xWB",
+                "images": [
+                    {
+                        "height": 640,
+                        "url": "https://mosaic.scdn.co/640/ab67616d0000b2731813ea8f590a0aab2820f922ab67616d0000b273206e2e76c3a706e4734d18abab67616d0000b2732fee61bfec596bb6f5447c50ab67616d0000b273c5e9e847ca9c0982b4c91d4b",
+                        "width": 640
+                    },
+                    {
+                        "height": 300,
+                        "url": "https://mosaic.scdn.co/300/ab67616d0000b2731813ea8f590a0aab2820f922ab67616d0000b273206e2e76c3a706e4734d18abab67616d0000b2732fee61bfec596bb6f5447c50ab67616d0000b273c5e9e847ca9c0982b4c91d4b",
+                        "width": 300
+                    },
+                    {
+                        "height": 60,
+                        "url": "https://mosaic.scdn.co/60/ab67616d0000b2731813ea8f590a0aab2820f922ab67616d0000b273206e2e76c3a706e4734d18abab67616d0000b2732fee61bfec596bb6f5447c50ab67616d0000b273c5e9e847ca9c0982b4c91d4b",
+                        "width": 60
+                    }
+                ],
+                "name": "Shilling",
+                "owner": {
+                    "display_name": "Haoran Xia",
+                    "external_urls": {
+                        "spotify": "https://open.spotify.com/user/11139998755"
+                    },
+                    "href": "https://api.spotify.com/v1/users/11139998755",
+                    "id": "11139998755",
+                    "type": "user",
+                    "uri": "spotify:user:11139998755"
+                },
+                "primary_color": null,
+                "public": false,
+                "snapshot_id": "MjMsNTM5NGJmZThkZmNiMWE4ZjUwOGM1ZmY4NzdlMGVlYWU1OGE5NzU4Nw==",
+                "tracks": {
+                    "href": "https://api.spotify.com/v1/playlists/4ut3lguknXTVRFYKuW0xWB/tracks",
+                    "total": 21
+                },
+                "type": "playlist",
+                "uri": "spotify:playlist:4ut3lguknXTVRFYKuW0xWB"
+            },
+            {
+                "collaborative": false,
+                "description": "",
+                "external_urls": {
+                    "spotify": "https://open.spotify.com/playlist/0nUQKMoSHCM0FPsCVeZRSp"
+                },
+                "href": "https://api.spotify.com/v1/playlists/0nUQKMoSHCM0FPsCVeZRSp",
+                "id": "0nUQKMoSHCM0FPsCVeZRSp",
+                "images": [
+                    {
+                        "height": null,
+                        "url": "https://i.scdn.co/image/ab67706c0000bebbe96da66801984733fd4b0b4e",
+                        "width": null
+                    }
+                ],
+                "name": "alles",
+                "owner": {
+                    "display_name": "Haoran Xia",
+                    "external_urls": {
+                        "spotify": "https://open.spotify.com/user/11139998755"
+                    },
+                    "href": "https://api.spotify.com/v1/users/11139998755",
+                    "id": "11139998755",
+                    "type": "user",
+                    "uri": "spotify:user:11139998755"
+                },
+                "primary_color": null,
+                "public": true,
+                "snapshot_id": "NTExLDEzZjA2ZWZiMmYzNmNlNGYyYzIyMDI3ZjVmOGVjZmYxY2MyZmQyMzI=",
+                "tracks": {
+                    "href": "https://api.spotify.com/v1/playlists/0nUQKMoSHCM0FPsCVeZRSp/tracks",
+                    "total": 346
+                },
+                "type": "playlist",
+                "uri": "spotify:playlist:0nUQKMoSHCM0FPsCVeZRSp"
+            },
+            {
+                "collaborative": false,
+                "description": "",
+                "external_urls": {
+                    "spotify": "https://open.spotify.com/playlist/2r2XtHdAzy1MgflOu0PsxO"
+                },
+                "href": "https://api.spotify.com/v1/playlists/2r2XtHdAzy1MgflOu0PsxO",
+                "id": "2r2XtHdAzy1MgflOu0PsxO",
+                "images": [
+                    {
+                        "height": 640,
+                        "url": "https://mosaic.scdn.co/640/ab67616d0000b2731d5cf960a92bb8b03fc2be7fab67616d0000b273442b53773d50e1b5369bb16cab67616d0000b273d3ce97395ff522b0d70c1094ab67616d0000b273fc8633e22a7dba6aab817bff",
+                        "width": 640
+                    },
+                    {
+                        "height": 300,
+                        "url": "https://mosaic.scdn.co/300/ab67616d0000b2731d5cf960a92bb8b03fc2be7fab67616d0000b273442b53773d50e1b5369bb16cab67616d0000b273d3ce97395ff522b0d70c1094ab67616d0000b273fc8633e22a7dba6aab817bff",
+                        "width": 300
+                    },
+                    {
+                        "height": 60,
+                        "url": "https://mosaic.scdn.co/60/ab67616d0000b2731d5cf960a92bb8b03fc2be7fab67616d0000b273442b53773d50e1b5369bb16cab67616d0000b273d3ce97395ff522b0d70c1094ab67616d0000b273fc8633e22a7dba6aab817bff",
+                        "width": 60
+                    }
+                ],
+                "name": "oh no",
+                "owner": {
+                    "display_name": "Haoran Xia",
+                    "external_urls": {
+                        "spotify": "https://open.spotify.com/user/11139998755"
+                    },
+                    "href": "https://api.spotify.com/v1/users/11139998755",
+                    "id": "11139998755",
+                    "type": "user",
+                    "uri": "spotify:user:11139998755"
+                },
+                "primary_color": null,
+                "public": false,
+                "snapshot_id": "MzY0LGU1NjVmYTgzYjM3NDRlNGNiNTNhMjljNjBkNWM3ODgyNWZmMmVjZDM=",
+                "tracks": {
+                    "href": "https://api.spotify.com/v1/playlists/2r2XtHdAzy1MgflOu0PsxO/tracks",
+                    "total": 125
+                },
+                "type": "playlist",
+                "uri": "spotify:playlist:2r2XtHdAzy1MgflOu0PsxO"
+            }
+        ],
+        "limit": 20,
+        "next": null,
+        "offset": 0,
+        "previous": null,
+        "total": 7
+    },
+    "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "public, max-age=0",
+        "etag": "\"MC-IjE0MTQwZDM3ZTlmOGI1YjAxZGQxMWYzYWIzZWE0ZTBhIg==\"",
+        "vary": "Authorization",
+        "x-robots-tag": "noindex, nofollow",
+        "access-control-allow-origin": "*",
+        "access-control-allow-headers": "Accept, App-Platform, Authorization, Content-Type, Origin, Retry-After, Spotify-App-Version, X-Cloud-Trace-Context, client-token, content-access-token",
+        "access-control-allow-methods": "GET, POST, OPTIONS, PUT, DELETE, PATCH",
+        "access-control-allow-credentials": "true",
+        "access-control-max-age": "604800",
+        "content-encoding": "gzip",
+        "strict-transport-security": "max-age=31536000",
+        "x-content-type-options": "nosniff",
+        "date": "Mon, 06 Dec 2021 20:19:16 GMT",
+        "server": "envoy",
+        "via": "HTTP/2 edgeproxy, 1.1 google",
+        "alt-svc": "clear",
+        "connection": "close",
+        "transfer-encoding": "chunked"
+    },
+    "statusCode": 200
+}
