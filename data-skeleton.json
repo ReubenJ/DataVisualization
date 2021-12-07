@@ -1,19 +1,33 @@
 [
     {
-        "name": "playlist_name",
-        "playlist_picture": "picture",
+        "name": "Your Top Songs 2021",
         "songs": [
             {
-                "album_name": "album_name",
-                "album_picture": "picture",
-                "artists": "artist_name",
-                "song_name": "song_name",
-                "genres": ["genre_name", "..."],
-                "popularity": 0,
-                "valence": 0,
-                "energy": 0,
-                "danceability": 0,
-                "loudness": 0
+                "track_id": "0jyikFM0Umv0KlnrOEKtTG",
+                "album_name": "The Bends",
+                "artists": "Radiohead",
+                "song_name": "My Iron Lung",
+                "popularity": 60,
+                "statistics": {
+                    "danceability": 0.242,
+                    "energy": 0.859,
+                    "key": 0,
+                    "loudness": -8.41,
+                    "mode": 1,
+                    "speechiness": 0.0663,
+                    "acousticness": 0.0565,
+                    "instrumentalness": 0.114,
+                    "liveness": 0.38,
+                    "valence": 0.672,
+                    "tempo": 96.917,
+                    "type": "audio_features",
+                    "id": "0jyikFM0Umv0KlnrOEKtTG",
+                    "uri": "spotify:track:0jyikFM0Umv0KlnrOEKtTG",
+                    "track_href": "https://api.spotify.com/v1/tracks/0jyikFM0Umv0KlnrOEKtTG",
+                    "analysis_url": "https://api.spotify.com/v1/audio-analysis/0jyikFM0Umv0KlnrOEKtTG",
+                    "duration_ms": 276427,
+                    "time_signature": 4
+                }
             }
         ]
     }
