@@ -1,0 +1,21 @@
+[
+    {
+        "name": "playlist_name",
+        "playlist_picture": "picture",
+        "songs": [
+            {
+                "album_name": "album_name",
+                "album_picture": "picture",
+                "artists": "artist_name",
+                "song_name": "song_name",
+                "genres": ["genre_name", "..."],
+                "popularity": 0,
+                "valence": 0,
+                "energy": 0,
+                "danceability": 0,
+                "loudness": 0
+            }
+        ]
+    }
+]
+

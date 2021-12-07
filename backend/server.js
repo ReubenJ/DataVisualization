@@ -100,6 +100,75 @@ app.get('/me_info', (req, res) => {
 });
 
 
+// Get all the data we need
+app.get('/data', async (req, res) => {
+  spotifyApi.getUserPlaylists().then(async (res) => {
+    // Store playlist info api calls as promises
+    let promises = [];
+    res.body.items.forEach((obj) => {
+      let playlist_id = obj.href.substring(obj.href.lastIndexOf('/') + 1, obj.href.length);
+      promises.push(spotifyApi.getPlaylistTracks(playlist_id));
+    });
+
+    const data = await getData(res, promises);
+
+    // Write to file
+    fs.writeFile('playlists_data.json', JSON.stringify(data), (err) => {
+      if (err) console.log(err);
+    });
+  });
+});
+
+async function getData(res, promises) {
+  return new Promise(resolve => {
+    Promise.all(promises).then(async (playlists) => {
+      let data = []
+      for (var playlist in playlists) {    
+        // Get list of track IDs
+        var trackIds = [];
+        for (var song_idx in playlists[playlist].body.items) 
+          trackIds.push(playlists[playlist].body.items[song_idx].track.id);
+
+        // Get list of song statistics
+        stats = [];
+        stats_APIdata = await spotifyApi.getAudioFeaturesForTracks(trackIds);
+        stats_APIdata.body.audio_features.forEach((item) => {
+          // stats.push({
+          //   "valence": item.valence,
+          //   "energy": item.energy,
+          //   "danceability": item.danceability,
+          //   "loudness": item.loudness
+          // });
+          stats.push(item);
+        });
+
+        // Get list of song data
+        var song_data = []
+        for (var song_idx in playlists[playlist].body.items) {
+          let song = playlists[playlist].body.items[song_idx];
+          song_data.push({ 
+              'track_id': trackIds[song_idx],
+              'album_name': song.track.album.name,
+              'artists': song.track.artists[0].name,
+              'song_name': song.track.name,
+              'genre': song.track.artists[0].genre,
+              'popularity': song.track.popularity,
+              'statistics': stats[song_idx]
+          });
+        }
+        
+        // Store data
+        data.push({
+          'name': res.body.items[playlist].name,
+          'songs': song_data
+        });  
+      }
+
+      resolve(data);
+    });
+  });
+}
+
 app.listen(8888, () =>
   console.log(
     'HTTP Server up. Now go to http://localhost:8888/login in your browser.'
