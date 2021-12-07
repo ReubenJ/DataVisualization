@@ -150,6 +150,10 @@ var data = {
     {
         id: "thirdnode",
         group: 2
+    },
+    {
+        id: "fourthnode",
+        group: 5
     }
   ],
   links: [

@@ -1,4 +1,4 @@
-import * as d3 from "https://cdn.skypack.dev/d3@7";
+import * as d3 from "http://d3js.org/d3.v3.js";
 
 var data = [];
 var RadarChart = {
@@ -34,6 +34,7 @@ var RadarChart = {
       },
       transitionDuration: 300
     },
+
     chart: function() {
       // default config
       var cfg = Object.create(RadarChart.defaultConfig);
@@ -384,31 +385,55 @@ var RadarChart = {
 };
 
 
-function RadarChart(data) {
-    var data = [];
+function CreateChart(data) {
+    var data = [
+            {
+                "A": 0.5,
+                "B": 0.5,
+                "C": 0.2
+            },
+            {
+                "A": 0.6,
+                "B": 0.25,
+                "C": 0.5
+            }
+        ];
+
     var chart = RadarChart.chart();
-    
     var c = data;
     var w = 600;
     var h = 600;
 
-    csv.forEach(function(item, i) {
-        if (i == 0){
-          headers = item;
-        } 
-        else {
-          newSeries = {};
-          item.forEach(function(v, j) {
-            if (j == 0) {
-              newSeries.className = v;
-              newSeries.axes = [];
-            } 
-            else {
-              newSeries.axes.push({"axis":[headers[j]], "value": parseFloat(v)});
-            }
-          });
-          
-          data.push(newSeries);
-        }
-      })
+    var newSeries_1 = {};
+    newSeries_1.className = "obj 1";
+    newSeries_1.axes = [];
+    newSeries_1.axes.push({"axis": ["A", "B", "C"], "value": [0.5, 0.5, 0.2]});
+    
+    var newSeries_2 = {};
+    newSeries_2.className = "obj 2";
+    newSeries_2.axes = [];
+    newSeries_2.axes.push({"axis": ["A", "B", "C"], "value": [0.6, 0.25, 0.5]});
+
+    RadarChart.defaultConfig.radius = 3;
+    RadarChart.defaultConfig.w = w;
+    RadarChart.defaultConfig.h = h;
+    RadarChart.draw("#chart-container", data);
+
+    function animate(elem, time) {
+        if (!elem) return;
+        var to = elem.offsetTop;
+        var from = window.scrollY;
+        var start = new Date().getTime();
+        var timer = setInterval(() => {
+            var step = Math.min(1, (new Date().getTime() - start) / time);
+            window.scrollTo(0, (from + step * (to - from)) + 1);
+            if (step == 1) clearInterval(timer); 
+        }, 25);
+        window.scrollTo(0, (from + 1));
+    }
+
+    var divVal = document.getElementById("chart-container");
+    animate(divVal, 600);
 }
+
+CreateChart();
