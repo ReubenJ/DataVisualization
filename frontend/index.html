@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="style.css">
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script src="https://d3js.org/d3.v3.min.js"></script>
+    
         <title>Spotify Data Visualization</title>
     </head>
     <body>
@@ -49,6 +50,7 @@
               <h3>Force Graph</h3>
               <div id="force"></div>
             </div>
+            
             <div class="col">
               <div id="#genreTable"></div>
               <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -69,9 +71,10 @@
                 </tr>
               </table>
             </div>
-          
+          </div>
+
           <!-- Row 2-->
-          <div class="row"></div>
+          <div class="row">
             <div class="col">
               Song Table
               <div class="buttons">
@@ -85,7 +88,7 @@
 
             <div class="col">
               Single Song Stats
-              <div class="radarChart"></div>
+              <div id="radarChart"></div>
             </div>
           </div>
         </div>

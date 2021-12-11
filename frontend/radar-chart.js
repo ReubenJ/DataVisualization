@@ -292,5 +292,5 @@ export function createRadarChart(data) {
   };
 
   // Call function to draw the Radar chart
-  RadarChart(".radarChart", data, radarChartOptions);
+  RadarChart("#radarChart", data, radarChartOptions);
 }
