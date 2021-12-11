@@ -103,55 +103,6 @@ app.get('/me_info', (req, res) => {
 });
 
 // Get all the data we need
-app.get('/data', (req, res) => {
-  // Personal data
-  //var my_data = spotifyApi.getMe();
-  //var my_topArtists = spotifyApi.getMyTopArtists();
-  //var my_topSongs = spotifyApi.getMyTopTracks();
-  //var my_playlists = spotifyApi.getUserPlaylists();
-
-  // Global data
-  //var categories = spotifyApi.getCategories();
-
-  // Get { playlist_name: playlist_data }
-  spotifyApi.getUserPlaylists().then((res) => {
-    // Store playlist info api calls as promises
-    let promises = [];
-    res.body.items.forEach((obj) => {
-      let playlist_id = obj.href.substring(obj.href.lastIndexOf('/') + 1, obj.href.length);
-      promises.push(spotifyApi.getPlaylistTracks(playlist_id));
-    });
-
-    // Unpack everything
-    let data = []
-    Promise.all(promises).then((playlists) => {
-      for (var playlist in playlists) {
-        song_data = []
-        for (var song_idx in playlists[playlist].body.items) {
-            let song = playlists[playlist].body.items[song_idx];
-            song_data.push({ 
-                'album_name': song.track.album.name,
-                'artists': song.track.artists[0].name,
-                'song_name': song.track.name,
-                'popularity': song.track.popularity
-            });
-        }
-        
-        data.push({
-          'name': res.body.items[playlist].name,
-          'songs': song_data
-        });
-      }
-
-      fs.writeFile('playlists_data.json', JSON.stringify(data), (err) => {
-        if (err) console.log(err);
-      });
-    });
-  }); 
-})
-
-
-// Get all the data we need
 app.get('/data', async (req, res) => {
   spotifyApi.getUserPlaylists().then(async (res) => {
     // Store playlist info api calls as promises
@@ -161,6 +112,7 @@ app.get('/data', async (req, res) => {
       promises.push(spotifyApi.getPlaylistTracks(playlist_id));
     });
 
+    // Collect data
     const data = await getData(res, promises);
 
     // Write to file
