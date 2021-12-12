@@ -35,27 +35,11 @@ var testdata = [
 
 // Common data that is used by the graphs
 var currentPlaylist;
-
 var currentSongs = [];
-var currentSongs2 = [];
-
 var currentlySelectedSongs;
-
-function setData1() {
-    currentlySelectedSongs = currentSongs;
-    var songsStats = extractStatistics(currentlySelectedSongs);
-    createRadarChart(songsStats);
-}
-
-function setData2() {
-    currentlySelectedSongs = currentSongs2;
-    var songsStats = extractStatistics(currentlySelectedSongs);
-    createRadarChart(songsStats);
-}
 
 function extractStatistics(songs) {
     var stats = [];
-
     // Data format must be:
     // {
     //     axis: "statname", value: "value"
@@ -73,6 +57,14 @@ function extractStatistics(songs) {
     return stats;
 }
 
+export function drawRadarChart() {
+    // TODO: Put image based on song data 
+    
+    // Draw the radar chart based on selected items 
+    var songsStats = extractStatistics(currentlySelectedSongs);
+    createRadarChart(songsStats);
+}
+
 function main() {
     // Structure json data 
     $.getJSON("../backend/playlists_data.json", (json) => {
@@ -83,20 +75,11 @@ function main() {
         currentSongs.push(currentPlaylist.songs[0]);
         currentSongs.push(currentPlaylist.songs[1]);
         
-        currentSongs2.push(currentPlaylist.songs[2]);
-        currentSongs2.push(currentPlaylist.songs[3]);
-
-        document.getElementById('b1').onclick = setData1;
-        document.getElementById('b2').onclick = setData2;
-        
         currentlySelectedSongs = currentSongs;
 
         // Draw the table (NOT YET IMPLEMENTED)
-        createTable(playlistOne); 
-
-        // Draw the radar chart based on selected items 
-        var songsStats = extractStatistics(currentlySelectedSongs);
-        createRadarChart(songsStats);
+        createTable(currentPlaylist, currentlySelectedSongs); 
+        drawRadarChart();
     });
 }
 

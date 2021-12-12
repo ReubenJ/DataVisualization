@@ -1,8 +1,6 @@
-// If you read this then you can remove/change all of this I was just trying stuff out
+import {drawRadarChart} from "./index.js";
 
-let selectedItems = [];
-
-function makeTable(titles, data) {
+function makeTable(titles, data, allsongs, currentlySelectedSongs) {
     let sortAscending = true;
 
     let table = d3.select('#songtable').append('table');
@@ -30,12 +28,15 @@ function makeTable(titles, data) {
         });
     
 
-    // TODO: Display only X items at a time 
-
     // Code for table rows
     var rows = table.append('tbody').selectAll('tr')
         .data(data).enter()
-        .append('tr');
+        .append('tr')
+        .attr('class', 'clickable-row')
+        .attr('id', (d) => {
+            // Set the current songs to the song clicked
+            return 'row' + data.indexOf(d);
+        });
     
     rows.selectAll('td')
         .data((d) => {
@@ -48,14 +49,34 @@ function makeTable(titles, data) {
         .attr('data-th', (d) => { return d.name; })
         .text((d) => { return d.value; })
         .on('click', (d) => {
-            console.log(d);
-            
+            // Handles connection with the radar chart
+            for (var song in allsongs) {
+                if (currentlySelectedSongs.length >= 2) {
+                    for (var song in allsongs.songs) {
+                        if (allsongs.songs[song].song_name == d.value) {
+                            currentlySelectedSongs.shift();
+                            currentlySelectedSongs.push(allsongs.songs[song]);
+                            drawRadarChart();
+                            return;
+                        }
+                    }
+                }
+                else {
+                    for (var song in allsongs.songs) {
+                        if (allsongs.songs[song].song_name == d.value) {
+                            currentlySelectedSongs.push(allsongs.songs[song]);
+                            drawRadarChart();
+                            return;
+                        }
+                    }
+                }
+            }
         });
     
 }
 
 
-export function createTable(data) {
+export function createTable(data, currentlySelectedSongs) {
     // Incoming data as JSON 
 
     /*
@@ -74,5 +95,5 @@ export function createTable(data) {
             "artist": data.songs[song].artists
         });
 
-    makeTable(headers, songdata);
+    makeTable(headers, songdata, data, currentlySelectedSongs);
 }

@@ -1,4 +1,4 @@
-#songtable {
+/* #songtable {
     margin: 50px;
   }
   p {
@@ -8,12 +8,12 @@
   /* 
   Generic Styling, for Desktops/Laptops 
   */
-  table { 
+  /* table { 
       width: 100%; 
       border-collapse: collapse; 
-  }
+  } */
   /* Zebra striping */
-  tr:nth-of-type(odd) { 
+  /* tr:nth-of-type(odd) { 
       background: #eee; 
   }
   th { 
@@ -36,4 +36,66 @@
   
   th.aes:after {
     content: "\21E7";
-  }
+  } */
+
+#songtable {
+  height: 700px;
+  overflow: auto;
+  font-family: monospace;
+}
+
+/* #songtable th {
+  
+} */
+
+#songtable thead th {
+	font-weight: bold;
+	text-align: left;
+	border: none;
+	padding: 10px 15px;
+	background: gray;
+	font-size: 14px;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+
+#songtable tbody td {
+  text-align: left;
+  border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	padding: 10px 15px;
+	font-size: 15px;
+	vertical-align: top;
+  border-bottom: 0.5px solid lightgray;
+}
+
+.clickable-row:hover,.clickable-row.highlight  {
+  background: rgb(224, 224, 224);
+  cursor: pointer;
+}
+
+/* .infocard-header {
+  padding: 10px;
+  border-radius: 5px 5px 0 0;
+  height: 30px;
+  background: linear-gradient(
+      rgba(0, 0, 0, 0.1), 
+      rgba(0, 0, 0, 0.1)
+    );
+}
+
+.infocard-body {
+  display: grid;
+  padding: 15px;
+  padding-bottom: 0px;
+  height: 210px;
+  margin-bottom: 20px;
+} */
+
+/* #songtable tbody tr:nth-child(even) {
+  background: green;
+}
+
+#songtable tbody tr:nth-child(odd) {
+  background: darkslategray
+} */
