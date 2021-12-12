@@ -75,10 +75,35 @@ function extractStatistics(songs) {
 
 function main() {
     // Structure json data 
-    $.getJSON("../backend/playlists_data.json", (json) => {
+    $.getJSON("playlists_data.json", (json) => {
+        var playlists = json;
+
+        // Add playlist names in the dropdown menu
+        var playlist_items = [];
+        $.each(playlists, function(val, text) {
+            console.log(val);
+            console.log(text['name']);
+            playlist_items.push('<li><a class="dropdown-item" href=#>' + text['name'] + '</a></li>');
+        });
+        $('#playlists').append(playlist_items.join(''));
+
+        // Change the selection of playlist inside the dropdown menu
+        $('#playlists li a').click(function(e) 
+        { 
+            e.preventDefault();
+            $('#playlists .active').attr('aria-current', 'false');
+            $('#playlists .active').removeClass('active');
+            
+            $(this).addClass('active');
+            $(this).attr('aria-current', 'true');
+
+
+            return false 
+        });
         var playlistOne = json[0];
         currentPlaylist = playlistOne;
 
+        
         // Some testing stuff
         currentSongs.push(currentPlaylist.songs[0]);
         currentSongs.push(currentPlaylist.songs[1]);
@@ -92,12 +117,18 @@ function main() {
         currentlySelectedSongs = currentSongs;
 
         // Draw the table (NOT YET IMPLEMENTED)
-        createTable(playlistOne); 
+        createTable(playlistOne);
 
         // Draw the radar chart based on selected items 
         var songsStats = extractStatistics(currentlySelectedSongs);
         createRadarChart(songsStats);
     });
+
+    // $(document).ready(function() 
+    // {
+        
+        
+    // });
 }
 
 main();

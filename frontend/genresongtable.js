@@ -14,6 +14,8 @@ function makeTable(titles, data) {
         .data(titles).enter()
         .append('th')
         .text((d) => { return d; })
+
+        // Sorts the table column alphabetically when clicked on 
         .on('click', (d) => {
             headers.attr('class', 'header');
             if (sortAscending) {
@@ -45,7 +47,6 @@ function makeTable(titles, data) {
         })
         .enter()
         .append('td')
-        .attr('data-th', (d) => { return d.name; })
         .text((d) => { return d.value; })
         .on('click', (d) => {
             console.log(d);
