@@ -12,6 +12,8 @@ function makeTable(titles, data, allsongs, currentlySelectedSongs) {
         .data(titles).enter()
         .append('th')
         .text((d) => { return d; })
+
+        // Sorts the table column alphabetically when clicked on 
         .on('click', (d) => {
             headers.attr('class', 'header');
             if (sortAscending) {
@@ -46,7 +48,6 @@ function makeTable(titles, data, allsongs, currentlySelectedSongs) {
         })
         .enter()
         .append('td')
-        .attr('data-th', (d) => { return d.name; })
         .text((d) => { return d.value; })
         .on('click', (d) => {
             // Handles connection with the radar chart
