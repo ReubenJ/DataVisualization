@@ -133,11 +133,14 @@ async function getData(res, promises) {
   return new Promise(resolve => {
     Promise.all(promises).then(async (playlists) => {
       let data = []
-      for (var playlist in playlists) {    
+      for (let playlist in playlists) {    
         // Get list of track IDs
-        var trackIds = [];
-        for (var song_idx in playlists[playlist].body.items) 
+        let trackIds = [];
+        let artistIds = [];
+        for (let song_idx in playlists[playlist].body.items) {
           trackIds.push(playlists[playlist].body.items[song_idx].track.id);
+          artistIds.push(playlists[playlist].body.items[song_idx].track.artists[0].id);
+        }
 
         // Get list of song statistics
         stats = [];
@@ -147,39 +150,41 @@ async function getData(res, promises) {
         });
 
         // Get list of song data
-        
-        // Split trackIds into arrays of 50 each
-        // var perChunk = 50 // items per chunk    
-        // var trackArrays = trackIds.reduce((resultArray, item, index) => { 
-        //   const chunkIndex = Math.floor(index/perChunk)
+        // Split artistIds into arrays of 50 each
+        var perChunk = 50 // items per chunk    
+        let artistArrays = artistIds.reduce((resultArray, item, index) => { 
+          const chunkIndex = Math.floor(index/perChunk)
 
-        //   if(!resultArray[chunkIndex]) {
-        //     resultArray[chunkIndex] = [] // start a new chunk
-        //   }
+          if(!resultArray[chunkIndex]) {
+            resultArray[chunkIndex] = [] // start a new chunk
+          }
 
-        //   resultArray[chunkIndex].push(item)
-        //   return resultArray
-        // }, []);
+          resultArray[chunkIndex].push(item)
+          return resultArray
+        }, []);      
 
-        // // For each array, make a request with .getTracks()
-        // let genres = [];
-        // for (let trackArray in trackArrays) {
-        //   let tracks = await spotifyApi.getTracks(trackArray);
-        //   for (let track in tracks.body) 
-        //     genres.push_back(track.artists[0].genres);
-        // }
+        // For each array, make a request with .getTracks()
+        let genresArray = [];
+        for (let artistArray in artistArrays) {
+          let artists = await spotifyApi.getArtists(artistArrays[artistArray]);
+          for (let artist in artists.body.artists) {
+            if (artists.body.artists[artist] != null) {
+              genresArray.push(artists.body.artists[artist].genres);
+            }
+            else 
+              genresArray.push(["unknown"]);
+          }
+        }
 
         var song_data = []
         for (var song_idx in playlists[playlist].body.items) {
           let song = playlists[playlist].body.items[song_idx];
-          //console.log(song.track);
-          //console.log(tracks.body.artists[0].genres);
           song_data.push({ 
               'track_id': trackIds[song_idx],
               'album_name': song.track.album.name,
               'artists': song.track.artists[0].name,
               'song_name': song.track.name,
-              'genre': "rock",
+              'genres': genresArray[song_idx],
               'popularity': song.track.popularity,
               'statistics': stats[song_idx]
           });

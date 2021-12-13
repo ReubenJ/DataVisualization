@@ -85,25 +85,19 @@ function main() {
         currentlySelectedSongs.push(currentPlaylist.songs[0]);
         currentlySelectedSongs.push(currentPlaylist.songs[1]);
 
-        // Draw the table
+        // Draw song table
         initTable('#songtable', ["track", "artist"]);
-        
         updateSongTable(currentlySelectedSongs, currentPlaylist);
         
         // Draw radar chart
         drawRadarChart();
-    });
 
-    $.getJSON("playlists.json", (json) => {
-        var playlists = json;
-        currentPlaylist = json[0];
-        console.log("sonething here");
-
+        // Draw genre table
         initTable('#genretable', ["ranking", "genre"]);
         let genreRanking = getTopGenresRanking(currentPlaylist)
         topGenreTable(genreRanking);
-
     });
+
 }
 
 main();
