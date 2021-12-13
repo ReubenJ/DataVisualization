@@ -2,7 +2,6 @@ import {drawRadarChart} from "./index.js";
 
 function makeTable(titles, data, allsongs, currentlySelectedSongs) {
     let sortAscending = true;
-
     let table = d3.select('#songtable').append('table');
 
     // Code for table head 
@@ -12,7 +11,7 @@ function makeTable(titles, data, allsongs, currentlySelectedSongs) {
         .data(titles).enter()
         .append('th')
         .text((d) => { return d; })
-
+        
         // Sorts the table column alphabetically when clicked on 
         .on('click', (d) => {
             headers.attr('class', 'header');
