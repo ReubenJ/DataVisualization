@@ -1,4 +1,4 @@
-import { initTable, updateTable} from "./genresongtable.js";
+import { initTable, updateSongTable, getTopGenresRanking, topGenreTable} from "./genresongtable.js";
 import { createRadarChart } from "./radar-chart.js";
 
 // Common data that is used by the graphs
@@ -58,16 +58,16 @@ function createDropdownMenu(playlists) {
         $(this).addClass('active');
         $(this).attr('aria-current', 'true');
 
-        console.log($(this).text())
         
         // Reset playlist data when changing playlists
         currentPlaylist = getPlaylist(playlists, $(this).text());
         currentlySelectedSongs = [];
-        currentlySelectedSongs.push(currentPlaylist[0]);
-        currentlySelectedSongs.push(currentPlaylist[1]);
+        currentlySelectedSongs.push(currentPlaylist.songs[0]);
+        currentlySelectedSongs.push(currentPlaylist.songs[1]);
 
-        updateTable(currentlySelectedSongs, currentPlaylist);
-
+        updateSongTable(currentlySelectedSongs, currentPlaylist);
+        drawRadarChart();
+        
         return false 
     });
 }
@@ -81,18 +81,28 @@ function main() {
         createDropdownMenu(playlists);
         
         // Default table values
-        var playlistOne = json[0];
-        currentPlaylist = playlistOne;
+        currentPlaylist = json[0];
         currentlySelectedSongs.push(currentPlaylist.songs[0]);
         currentlySelectedSongs.push(currentPlaylist.songs[1]);
 
         // Draw the table
         initTable('#songtable', ["track", "artist"]);
-        initTable('#genretable', ["ranking", "genre"]);
-        updateTable(currentlySelectedSongs, currentPlaylist);
-
+        
+        updateSongTable(currentlySelectedSongs, currentPlaylist);
+        
         // Draw radar chart
         drawRadarChart();
+    });
+
+    $.getJSON("playlists.json", (json) => {
+        var playlists = json;
+        currentPlaylist = json[0];
+        console.log("sonething here");
+
+        initTable('#genretable', ["ranking", "genre"]);
+        let genreRanking = getTopGenresRanking(currentPlaylist)
+        topGenreTable(genreRanking);
+
     });
 }
 

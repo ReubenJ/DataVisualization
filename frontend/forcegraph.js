@@ -185,24 +185,8 @@ function ForceGraph({
 };
 
 function artists() {
-  // var set = new Set();
-  const request = new Request('localhost:8888/data');
-  fetch(request)
-    .then(response => {
-      if (response.status === 200) {
-        return response.json();
-      } else {
-        throw new Error("Could not fetch data.")
-      }
-    })
-    .then(response => {
-      console.debug(response);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-  console.log(request.method)
-  // $.getJSON("../backend/playlists.json", (json) => {
+  var set = new Set();
+  // $.getJSON("playlists_data.json", (json) => {
   //   $.each(json[0]["songs"], function(val, text) {
   //     console.log("force " + text["artists"] + " " + set.size);
   //     set.add(text["artists"]);
@@ -210,6 +194,9 @@ function artists() {
   //     // playlist_items.push('<li><a class="dropdown-item" href=#>' + text['name'] + '</a></li>');
   //   });
   // });
+  d3.json("/data", function(data) {
+    console.log("data: " + data);
+  });
   // console.log(set.size);
   // var res = new Array();
   // for (let item of set.values()) {

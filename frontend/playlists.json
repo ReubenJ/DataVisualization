@@ -7,7 +7,7 @@
                 "album_name": "The Bends",
                 "artists": "Radiohead",
                 "song_name": "My Iron Lung",
-                "genre": ["Rock", "Funk"],
+                "genres": ["Rock", "Funk"],
                 "popularity": 60,
                 "statistics": {
                     "danceability": 0.242,
@@ -35,7 +35,7 @@
                 "album_name": "Wish You Were Here (Remastered Version)",
                 "artists": "Pink Floyd",
                 "song_name": "Shine On You Crazy Diamond, Pts. 1-5 - 2011 Remaster",
-                "genre": ["Pop", "Metal"],
+                "genres": ["Pop", "Metal"],
                 "popularity": 65,
                 "statistics": {
                     "danceability": 0.27,
@@ -63,7 +63,7 @@
                 "album_name": "Pablo Honey",
                 "artists": "Radiohead",
                 "song_name": "Creep",
-                "genre": ["Rock", "Pop"],
+                "genres": ["Rock", "Pop"],
                 "popularity": 85,
                 "statistics": {
                     "danceability": 0.515,

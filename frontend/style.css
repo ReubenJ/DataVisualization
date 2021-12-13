@@ -38,7 +38,7 @@
     content: "\21E7";
   } */
 
-.musictables {
+#songtable {
   height: 700px;
   overflow: auto;
   font-family: monospace;
@@ -48,7 +48,7 @@
   
 } */
 
-.musictables thead th {
+#songtable thead th {
 	font-weight: bold;
 	text-align: left;
 	border: none;
@@ -59,7 +59,7 @@
 	border-right: 1px solid #ddd;
 }
 
-.musictables tbody td {
+#songtable tbody td {
   text-align: left;
   border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
@@ -72,6 +72,37 @@
 .clickable-row:hover,.clickable-row.highlight  {
   background: rgb(224, 224, 224);
   cursor: pointer;
+}
+
+#genretable {
+  height: 700px;
+  overflow: auto;
+  font-family: monospace;
+}
+
+/* #songtable th {
+  
+} */
+
+#genretable thead th {
+	font-weight: bold;
+	text-align: left;
+	border: none;
+	padding: 10px 15px;
+	background: gray;
+	font-size: 14px;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+}
+
+#genretable tbody td {
+  text-align: left;
+  border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	padding: 10px 15px;
+	font-size: 15px;
+	vertical-align: top;
+  border-bottom: 0.5px solid lightgray;
 }
 
 /* .infocard-header {
