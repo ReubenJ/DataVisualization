@@ -5,7 +5,7 @@ import * as d3 from "https://cdn.skypack.dev/d3@7";
 // Released under the ISC license.
 // https://observablehq.com/@d3/force-directed-graph
 // 
-// Added Node selection 
+// Added Node selection
 function ForceGraph({
   nodes, // an iterable of node objects (typically [{id}, …])
   links // an iterable of link objects (typically [{source, target}, …])
@@ -69,6 +69,11 @@ function ForceGraph({
       .attr("viewBox", [-width / 2, -height / 2, width, height])
       .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
+  svg.append("defs").append("clipPath")
+    .attr("id", "circularClip")
+    .append("circle")
+    .attr("r", 20);
+
   const link = svg.append("g")
       .attr("stroke", linkStroke)
       .attr("stroke-opacity", linkStrokeOpacity)
@@ -85,9 +90,43 @@ function ForceGraph({
       .attr("stroke-width", nodeStrokeWidth)
     .selectAll("circle")
     .data(nodes)
-    .join("circle")
+    .join("g")
       .attr("r", nodeRadius)
       .call(drag(simulation));
+
+  node.append("clipPath")
+    .attr("id", function(d, i) {return `circularClip-${i}`;})
+    .append("circle")
+    .attr("r", nodeRadius);
+
+  node.append("circle")
+    .attr("r", nodeRadius);
+  
+  node.append("image")
+    .attr("href", "public/jobim.png")
+    .attr("height", "50")
+    .attr("width", "50")
+    .attr("style", "opacity: 0%;")
+    .attr("clip-path", function(d, i) {return `url(#circularClip-${i})`;})
+    .on('mouseover', function() {
+      d3.select(this)
+        .transition()
+          .attr("style", "opacity: 100%;");
+    })
+    .on('mouseout', function(e, d) {
+      if (d.id !== selectedArtist) {
+        d3.select(this)
+        .transition()
+          .attr("style", "opacity: 0%;");
+      } 
+    })
+    .on('click', function(e, d) {
+      node
+        .select("image")
+        .filter((d) => d.id === selectedArtist)
+        .attr("style", "opacity: 0%;");
+      selectedArtist = d.id;
+    });
 
   if (W) link.attr("stroke-width", ({index: i}) => W[i]);
   if (G) node.attr("fill", ({index: i}) => color(G[i]));
@@ -106,8 +145,15 @@ function ForceGraph({
       .attr("y2", d => d.target.y);
 
     node
+      .select("image")
+      .attr("x", d => d.x - 25)
+      .attr("y", d => d.y - 25);
+    
+    node
+      .selectAll("circle")
       .attr("cx", d => d.x)
       .attr("cy", d => d.y);
+    
   }
 
   function drag(simulation) {    
@@ -170,6 +216,8 @@ var data = {
   ]
   
 };
+
+var selectedArtist = null;
 
 var chart = ForceGraph(data, {
     nodeId: d => d.id,

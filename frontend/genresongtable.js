@@ -76,6 +76,65 @@ function makeTable(titles, data, allsongs, currentlySelectedSongs) {
 }
 
 
+export function createTableHeader(){
+    var table = d3.select('#songtable').append('table');
+    var thead = table.append('thead');
+    var tbody = table.append('tbody');
+
+    // append the header row
+    thead.append('tr')
+        .selectAll('th')
+        .data(['track','artist']).enter()
+        .append('th')
+        .text(function(col_names) {
+            return col_names;
+        });
+}
+
+export function updateTable(data){
+    
+    let songdata = [];
+    
+    for (const song in data.songs) 
+        songdata.push({
+            "track": data.songs[song].song_name, 
+            "artist": data.songs[song].artists
+        });
+    
+
+    console.log(songdata);
+    // var table = d3.select('#songtable').append('table');
+    // var tbody = table.append('tbody');
+    
+    var rows = tbody.selectAll('tr')
+        .data(songdata);
+
+    var rowsEnter = rows.enter()
+        .append('tr');
+
+    rowsEnter.append('td')
+        .attr("class", "trackColumn")
+        .text(function(d) {
+            return d.id;
+        });
+    
+    rowsEnter.append('td')
+        .attr("class", "artistColumn")
+        .text(function(d) {
+            return d.id;
+        });
+    
+    d3.selectAll(".trackColumn").data(songdata).text(function(d) {
+        return d.track;
+    });
+
+    d3.selectAll(".artistColumn").data(songdata).text(function(d) {
+        return d.artist;
+    });
+
+    rows.exit().remove();
+}
+
 export function createTable(data, currentlySelectedSongs) {
     // Incoming data as JSON 
 

@@ -1,37 +1,5 @@
-import { createTable } from "./genresongtable.js";
+import { createTable, createTableHeader, updateTable} from "./genresongtable.js";
 import { createRadarChart } from "./radar-chart.js";
-
-// Test data (for radar chart)
-var testdata = [
-    [//iPhone
-    {axis:"Battery Life",value:0.22},
-    {axis:"Brand",value:0.28},
-    {axis:"Contract Cost",value:0.29},
-    {axis:"Design And Quality",value:0.17},
-    {axis:"Have Internet Connectivity",value:0.22},
-    {axis:"Large Screen",value:0.02},
-    {axis:"Price Of Device",value:0.21},
-    {axis:"To Be A Smartphone",value:0.50}			
-    ],[//Samsung
-    {axis:"Battery Life",value:0.27},
-    {axis:"Brand",value:0.16},
-    {axis:"Contract Cost",value:0.35},
-    {axis:"Design And Quality",value:0.13},
-    {axis:"Have Internet Connectivity",value:0.20},
-    {axis:"Large Screen",value:0.13},
-    {axis:"Price Of Device",value:0.35},
-    {axis:"To Be A Smartphone",value:0.38}
-    ],[//Nokia Smartphone
-    {axis:"Battery Life",value:0.26},
-    {axis:"Brand",value:0.10},
-    {axis:"Contract Cost",value:0.30},
-    {axis:"Design And Quality",value:0.14},
-    {axis:"Have Internet Connectivity",value:0.22},
-    {axis:"Large Screen",value:0.04},
-    {axis:"Price Of Device",value:0.41},
-    {axis:"To Be A Smartphone",value:0.30}
-    ]
-  ];
 
 // Common data that is used by the graphs
 var currentPlaylist;
@@ -65,6 +33,16 @@ export function drawRadarChart() {
     createRadarChart(songsStats);
 }
 
+function getPlaylist(playlists, playlistName){
+    for(var i = 0; i < playlists.length; i++){
+        console.log(playlists[i]['name'])
+        console.log(playlistName)
+        if (playlists[i]['name'] == playlistName) {
+            return playlists[i]
+        }
+    }
+}
+
 function main() {
     // Structure json data 
     $.getJSON("playlists_data.json", (json) => {
@@ -79,7 +57,6 @@ function main() {
         });
         $('#playlists').append(playlist_items.join(''));
 
-        // Change the selection of playlist inside the dropdown menu
         $('#playlists li a').click(function(e) 
         { 
             e.preventDefault();
@@ -89,9 +66,14 @@ function main() {
             $(this).addClass('active');
             $(this).attr('aria-current', 'true');
 
+            console.log($(this).text())
+            updateTable(getPlaylist(playlists, $(this).text()));
 
             return false 
         });
+
+        // Change the selection of playlist inside the dropdown menu
+    
         var playlistOne = json[0];
         currentPlaylist = playlistOne;
 
@@ -103,15 +85,10 @@ function main() {
         currentlySelectedSongs = currentSongs;
 
         // Draw the table (NOT YET IMPLEMENTED)
-        createTable(currentPlaylist, currentlySelectedSongs); 
+        createTableHeader();
+        createTable(playlists, currentlySelectedSongs); 
         drawRadarChart();
     });
-
-    // $(document).ready(function() 
-    // {
-        
-        
-    // });
 }
 
 main();
