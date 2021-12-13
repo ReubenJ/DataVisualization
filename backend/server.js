@@ -3,6 +3,7 @@ const express = require('express')
 var cors = require('cors');
 
 const fs = require('fs');
+// const { resolveSoa } = require('dns');
 
 // This file is copied from: https://github.com/thelinmichael/spotify-web-api-node/blob/master/examples/tutorial/00-get-access-token.js
 
@@ -28,20 +29,20 @@ const scopes = [
     'user-follow-modify'
   ];
 
-// let client_id = '2952289f1dcc4380bbec371dfbfce131';
-// let client_secret = '56d8f3d3af3848c1a5f365efa6339593';
+let client_id = '2952289f1dcc4380bbec371dfbfce131';
+let client_secret = '56d8f3d3af3848c1a5f365efa6339593';
 
 // credentials are optional
 var spotifyApi = new SpotifyWebApi({
-    clientId: '33198c2c946942fcb4efb7e193864b79',
-    clientSecret: 'c3645983dd8d41e293563592a94841bd',
+    clientId: client_id,
+    clientSecret: client_secret,
     redirectUri: 'http://localhost:8888/callback'
 });
   
 
 // Setup/initializing
 const app = express();
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(__dirname + '/../frontend'))
    .use(cors());
 
 
@@ -104,21 +105,27 @@ app.get('/me_info', (req, res) => {
 
 // Get all the data we need
 app.get('/data', async (req, res) => {
-  spotifyApi.getUserPlaylists().then(async (res) => {
+  spotifyApi.getUserPlaylists().then(async (results) => {
     // Store playlist info api calls as promises
     let promises = [];
-    res.body.items.forEach((obj) => {
+    results.body.items.forEach((obj) => {
       let playlist_id = obj.href.substring(obj.href.lastIndexOf('/') + 1, obj.href.length);
       promises.push(spotifyApi.getPlaylistTracks(playlist_id));
     });
 
     // Collect data
-    const data = await getData(res, promises);
+    const data = await getData(results, promises);
 
     // Write to file
     fs.writeFile('playlists_data.json', JSON.stringify(data), (err) => {
       if (err) console.log(err);
     });
+    
+    res.send(data);
+  })
+  .catch(error => {
+    res.send("error getting data: " + JSON.stringify(error));
+    console.error(error);
   });
 });
 
@@ -136,25 +143,43 @@ async function getData(res, promises) {
         stats = [];
         stats_APIdata = await spotifyApi.getAudioFeaturesForTracks(trackIds);
         stats_APIdata.body.audio_features.forEach((item) => {
-          // stats.push({
-          //   "valence": item.valence,
-          //   "energy": item.energy,
-          //   "danceability": item.danceability,
-          //   "loudness": item.loudness
-          // });
           stats.push(item);
         });
 
         // Get list of song data
+        
+        // Split trackIds into arrays of 50 each
+        // var perChunk = 50 // items per chunk    
+        // var trackArrays = trackIds.reduce((resultArray, item, index) => { 
+        //   const chunkIndex = Math.floor(index/perChunk)
+
+        //   if(!resultArray[chunkIndex]) {
+        //     resultArray[chunkIndex] = [] // start a new chunk
+        //   }
+
+        //   resultArray[chunkIndex].push(item)
+        //   return resultArray
+        // }, []);
+
+        // // For each array, make a request with .getTracks()
+        // let genres = [];
+        // for (let trackArray in trackArrays) {
+        //   let tracks = await spotifyApi.getTracks(trackArray);
+        //   for (let track in tracks.body) 
+        //     genres.push_back(track.artists[0].genres);
+        // }
+
         var song_data = []
         for (var song_idx in playlists[playlist].body.items) {
           let song = playlists[playlist].body.items[song_idx];
+          //console.log(song.track);
+          //console.log(tracks.body.artists[0].genres);
           song_data.push({ 
               'track_id': trackIds[song_idx],
               'album_name': song.track.album.name,
               'artists': song.track.artists[0].name,
               'song_name': song.track.name,
-              'genre': song.track.artists[0].genre,
+              'genre': "rock",
               'popularity': song.track.popularity,
               'statistics': stats[song_idx]
           });

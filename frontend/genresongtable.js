@@ -1,18 +1,116 @@
 import {drawRadarChart} from "./index.js";
 
-function makeTable(titles, data, allsongs, currentlySelectedSongs) {
-    let sortAscending = true;
-    let table = d3.select('#songtable').append('table');
+// Initializes the table
+export function initTable(tableId, columnNames) {
+    var table = d3.select(tableId).append('table');
+    table.append('tbody');
+    table.select('tbody').selectAll('tr');
 
-    // Code for table head 
-    var headers = table.append('thead')
+    table.append('thead')
         .append('tr')
         .selectAll('th')
-        .data(titles).enter()
+        .data(columnNames).enter()
         .append('th')
         .text((d) => { return d; })
-        
-        // Sorts the table column alphabetically when clicked on 
+}
+
+export function getTopGenresRanking(data){
+    let genreFrequency = {};
+    console.log("genreRankings");
+    for (const song in data.songs){
+        for (const genre in data.songs[song].genres) {
+            var currentGenre = data.songs[song].genres[genre];
+            if (genreFrequency.hasOwnProperty(currentGenre)) {
+                genreFrequency[currentGenre] += 1;
+            } else {
+                genreFrequency[currentGenre] = 1;
+            }
+        }
+    }
+
+    var result = Object.keys(genreFrequency).sort(function(a, b) {
+        return genreFrequency - genreFrequency[a];
+      })
+    let genreRanking = [];
+    for (const genre in result){
+        let rank = parseInt(genre) + 1
+        genreRanking.push({
+            "genre": result[genre], 
+            "ranking": rank
+        });
+    }
+    return genreRanking;
+}
+
+
+export function topGenreTable(genredata) {
+    let columns = ["ranking", "genre"];
+    let table = d3.select('#genretable').select('table');
+    let tbody = table.select('tbody');
+    var rows = tbody.selectAll('tr')
+		  .data(genredata)
+		  .enter()
+		  .append('tr');
+    
+    var cells = rows.selectAll('td')
+        .data(function (row) {
+            return columns.map(function (column) {
+            return {column: column, value: row[column]};
+        });
+        })
+        .enter()
+        .append('td')
+        .text(function (d) { return d.value; });
+
+    
+    console.log("hello" + genredata);
+
+    
+    // rows.append('td')
+    //     .attr("class", "rankingColumn")
+    //     .text(function(d) {
+    //         return d.id;
+    //     });
+    
+    // rows.append('td')
+    //     .attr("class", "genreColumn")
+    //     .text(function(d) {
+    //         return d.id;
+    //     });
+    
+    // d3.selectAll(".rankingColumn").data(genredata).text(function(d) {
+    //     return d.ranking;
+    // });
+
+    // d3.selectAll(".genreColumn").data(genredata).text(function(d) {
+    //     return d.genre;
+    // });
+}
+
+// Update table
+export function updateSongTable(currentlySelectedSongs, data) {
+    let songdata = [];
+    let sortAscending = true;
+
+    // Prepare song data
+    for (const song in data.songs) 
+        songdata.push({
+            "track": data.songs[song].song_name, 
+            "artist": data.songs[song].artists
+        });
+    
+    // Initialize d3 stuff
+    let table = d3.select('#songtable').select('table');
+    let tbody = table.select('tbody');
+    let rows = tbody.selectAll('tr')
+        .data(songdata);
+    
+    // Remove any old data
+    rows.exit().remove();
+    
+    // Make headers clickable for sorting
+    let headers = table.select('thead')
+        .selectAll('th')
         .on('click', (d) => {
             headers.attr('class', 'header');
             if (sortAscending) {
@@ -28,72 +126,45 @@ function makeTable(titles, data, allsongs, currentlySelectedSongs) {
             }
         });
     
-
-    // Code for table rows
-    var rows = table.append('tbody').selectAll('tr')
-        .data(data).enter()
+    // Prepare rows and fill with data
+    let rowsEnter = rows.enter()
         .append('tr')
         .attr('class', 'clickable-row')
         .attr('id', (d) => {
-            // Set the current songs to the song clicked
-            return 'row' + data.indexOf(d);
+            return 'row' + songdata.indexOf(d);
+        });
+
+    rowsEnter.append('td')
+        .attr("class", "trackColumn")
+        .text(function(d) {
+            return d.id;
         });
     
-    rows.selectAll('td')
-        .data((d) => {
-            return titles.map((k) => {
-                return {name: d, value: d[k] };
-            });
-        })
-        .enter()
-        .append('td')
-        .text((d) => { return d.value; })
-        .on('click', (d) => {
-            // Handles connection with the radar chart
-            for (var song in allsongs) {
-                if (currentlySelectedSongs.length >= 2) {
-                    for (var song in allsongs.songs) {
-                        if (allsongs.songs[song].song_name == d.value) {
-                            currentlySelectedSongs.shift();
-                            currentlySelectedSongs.push(allsongs.songs[song]);
-                            drawRadarChart();
-                            return;
-                        }
-                    }
-                }
-                else {
-                    for (var song in allsongs.songs) {
-                        if (allsongs.songs[song].song_name == d.value) {
-                            currentlySelectedSongs.push(allsongs.songs[song]);
-                            drawRadarChart();
-                            return;
-                        }
-                    }
-                }
+    rowsEnter.append('td')
+        .attr("class", "artistColumn")
+        .text(function(d) {
+            return d.id;
+        });
+    
+    // Make rows clickable for usage in radarchart
+    rows.on('click', (d) => {
+        // Handles connection with the radar chart
+        for (let song in data.songs) {
+            if (data.songs[song].song_name == d.track) {
+                currentlySelectedSongs.shift();
+                currentlySelectedSongs.push(data.songs[song]);
+                drawRadarChart();
+                return;
             }
-        });
-    
-}
+        }
+    });
 
+    // Put data in respective position
+    d3.selectAll(".trackColumn").data(songdata).text(function(d) {
+        return d.track;
+    });
 
-export function createTable(data, currentlySelectedSongs) {
-    // Incoming data as JSON 
-
-    /*
-    Data must be in CSV like format:
-    row0: header1, header2, header3, ...                   } headers
-    row1: data.item1, data.item2, dataitem3, ...           } 1 data item
-    row2: ...
-    */
-
-    let headers = ["track-name", "artist"];
-    let songdata = [];
-    
-    for (const song in data.songs) 
-        songdata.push({
-            "track-name": data.songs[song].song_name, 
-            "artist": data.songs[song].artists
-        });
-
-    makeTable(headers, songdata, data, currentlySelectedSongs);
+    d3.selectAll(".artistColumn").data(songdata).text(function(d) {
+        return d.artist;
+    });
 }
