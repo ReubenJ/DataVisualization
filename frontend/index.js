@@ -1,11 +1,11 @@
-import { createTable, createTableHeader, updateTable} from "./genresongtable.js";
+import { initTable, updateTable} from "./genresongtable.js";
 import { createRadarChart } from "./radar-chart.js";
 
 // Common data that is used by the graphs
 var currentPlaylist;
-var currentSongs = [];
-var currentlySelectedSongs;
+var currentlySelectedSongs = []
 
+// Extract statistics 
 function extractStatistics(songs) {
     var stats = [];
     // Data format must be:
@@ -27,20 +27,49 @@ function extractStatistics(songs) {
 
 export function drawRadarChart() {
     // TODO: Put image based on song data 
-    
-    // Draw the radar chart based on selected items 
     var songsStats = extractStatistics(currentlySelectedSongs);
     createRadarChart(songsStats);
 }
 
 function getPlaylist(playlists, playlistName){
     for(var i = 0; i < playlists.length; i++){
-        console.log(playlists[i]['name'])
-        console.log(playlistName)
         if (playlists[i]['name'] == playlistName) {
-            return playlists[i]
+            return playlists[i];
         }
     }
+}
+
+function createDropdownMenu(playlists) {
+    // Add playlist names in the dropdown menu
+    var playlist_items = [];
+    $.each(playlists, function(val, text) {
+        console.log(val);
+        console.log(text['name']);
+        playlist_items.push('<li><a class="dropdown-item" href=#>' + text['name'] + '</a></li>');
+    });
+    $('#playlists').append(playlist_items.join(''));
+
+    $('#playlists li a').click(function(e) 
+    { 
+        e.preventDefault();
+        $('#playlists .active').attr('aria-current', 'false');
+        $('#playlists .active').removeClass('active');
+        
+        $(this).addClass('active');
+        $(this).attr('aria-current', 'true');
+
+        console.log($(this).text())
+        
+        // Reset playlist data when changing playlists
+        currentPlaylist = getPlaylist(playlists, $(this).text());
+        currentlySelectedSongs = [];
+        currentlySelectedSongs.push(currentPlaylist[0]);
+        currentlySelectedSongs.push(currentPlaylist[1]);
+
+        updateTable(currentlySelectedSongs, currentPlaylist);
+
+        return false 
+    });
 }
 
 function main() {
@@ -48,45 +77,21 @@ function main() {
     $.getJSON("playlists_data.json", (json) => {
         var playlists = json;
 
-        // Add playlist names in the dropdown menu
-        var playlist_items = [];
-        $.each(playlists, function(val, text) {
-            console.log(val);
-            console.log(text['name']);
-            playlist_items.push('<li><a class="dropdown-item" href=#>' + text['name'] + '</a></li>');
-        });
-        $('#playlists').append(playlist_items.join(''));
-
-        $('#playlists li a').click(function(e) 
-        { 
-            e.preventDefault();
-            $('#playlists .active').attr('aria-current', 'false');
-            $('#playlists .active').removeClass('active');
-            
-            $(this).addClass('active');
-            $(this).attr('aria-current', 'true');
-
-            console.log($(this).text())
-            updateTable(getPlaylist(playlists, $(this).text()));
-
-            return false 
-        });
-
-        // Change the selection of playlist inside the dropdown menu
-    
+        // Create dropdown menu
+        createDropdownMenu(playlists);
+        
+        // Default table values
         var playlistOne = json[0];
         currentPlaylist = playlistOne;
+        currentlySelectedSongs.push(currentPlaylist.songs[0]);
+        currentlySelectedSongs.push(currentPlaylist.songs[1]);
 
-        
-        // Some testing stuff
-        currentSongs.push(currentPlaylist.songs[0]);
-        currentSongs.push(currentPlaylist.songs[1]);
-        
-        currentlySelectedSongs = currentSongs;
+        // Draw the table
+        initTable('#songtable', ["track", "artist"]);
+        initTable('#genretable', ["ranking", "genre"]);
+        updateTable(currentlySelectedSongs, currentPlaylist);
 
-        // Draw the table (NOT YET IMPLEMENTED)
-        createTableHeader();
-        createTable(playlists, currentlySelectedSongs); 
+        // Draw radar chart
         drawRadarChart();
     });
 }

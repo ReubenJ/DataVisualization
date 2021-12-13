@@ -38,7 +38,7 @@
     content: "\21E7";
   } */
 
-#songtable {
+.musictables {
   height: 700px;
   overflow: auto;
   font-family: monospace;
@@ -48,7 +48,7 @@
   
 } */
 
-#songtable thead th {
+.musictables thead th {
 	font-weight: bold;
 	text-align: left;
 	border: none;
@@ -59,7 +59,7 @@
 	border-right: 1px solid #ddd;
 }
 
-#songtable tbody td {
+.musictables tbody td {
   text-align: left;
   border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;

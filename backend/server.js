@@ -154,7 +154,7 @@ async function getData(res, promises) {
               'album_name': song.track.album.name,
               'artists': song.track.artists[0].name,
               'song_name': song.track.name,
-              'genre': song.track.artists[0].genre,
+              'genre': song.track.artists[0].genres[0],
               'popularity': song.track.popularity,
               'statistics': stats[song_idx]
           });

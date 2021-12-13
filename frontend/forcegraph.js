@@ -1,4 +1,5 @@
 import * as d3 from "https://cdn.skypack.dev/d3@7";
+// import { readFile } from 'fs';
 
 // Modified from
 // Copyright 2021 Observable, Inc.
@@ -183,6 +184,46 @@ function ForceGraph({
   return Object.assign(svg.node(), {scales: {color}});
 };
 
+function artists() {
+  // var set = new Set();
+  const request = new Request('localhost:8888/data');
+  fetch(request)
+    .then(response => {
+      if (response.status === 200) {
+        return response.json();
+      } else {
+        throw new Error("Could not fetch data.")
+      }
+    })
+    .then(response => {
+      console.debug(response);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  console.log(request.method)
+  // $.getJSON("../backend/playlists.json", (json) => {
+  //   $.each(json[0]["songs"], function(val, text) {
+  //     console.log("force " + text["artists"] + " " + set.size);
+  //     set.add(text["artists"]);
+  //     // console.log(text['name']);
+  //     // playlist_items.push('<li><a class="dropdown-item" href=#>' + text['name'] + '</a></li>');
+  //   });
+  // });
+  // console.log(set.size);
+  // var res = new Array();
+  // for (let item of set.values()) {
+  //   console.log("force ", item);
+  //   res.append({
+  //     id: item,
+  //     group: 1
+  //   });
+  // }
+  // return res;
+}
+
+// console.log(artists());
+
 var data = {
   nodes: [
     {
@@ -226,4 +267,5 @@ var chart = ForceGraph(data, {
     linkStrokeWidth: l => Math.sqrt(l.value)
 });
 
+artists();
 d3.select("#force").node().appendChild(chart);
