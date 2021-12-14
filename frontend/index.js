@@ -66,6 +66,9 @@ function createDropdownMenu(playlists) {
         currentlySelectedSongs.push(currentPlaylist.songs[1]);
 
         updateSongTable(currentlySelectedSongs, currentPlaylist);
+        let genreRanking = getTopGenresRanking(currentPlaylist)
+        console.log(genreRanking);
+        topGenreTable(genreRanking);
         drawRadarChart();
         
         return false 

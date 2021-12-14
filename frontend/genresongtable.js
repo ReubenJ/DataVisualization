@@ -44,6 +44,7 @@ export function getTopGenresRanking(data){
 
 
 export function topGenreTable(genredata) {
+    // Initialize D3 stuff
     let columns = ["ranking", "genre"];
     let table = d3.select('#genretable').select('table');
     let tbody = table.select('tbody');
@@ -52,39 +53,29 @@ export function topGenreTable(genredata) {
 		  .enter()
 		  .append('tr');
     
-    var cells = rows.selectAll('td')
-        .data(function (row) {
-            return columns.map(function (column) {
-            return {column: column, value: row[column]};
+    // Remove any old data
+    tbody.selectAll('tr').data(genredata).exit().remove();
+
+    // Put data in respective position    
+    rows.append('td')
+        .attr("class", "rankingColumn")
+        .text(function(d) {
+            return d.id;
         });
-        })
-        .enter()
-        .append('td')
-        .text(function (d) { return d.value; });
+    
+    rows.append('td')
+        .attr("class", "genreColumn")
+        .text(function(d) {
+            return d.id;
+        });
+    
+    d3.selectAll(".rankingColumn").data(genredata).text(function(d) {
+        return d.ranking;
+    });
 
-    
-    console.log("hello" + genredata);
-
-    
-    // rows.append('td')
-    //     .attr("class", "rankingColumn")
-    //     .text(function(d) {
-    //         return d.id;
-    //     });
-    
-    // rows.append('td')
-    //     .attr("class", "genreColumn")
-    //     .text(function(d) {
-    //         return d.id;
-    //     });
-    
-    // d3.selectAll(".rankingColumn").data(genredata).text(function(d) {
-    //     return d.ranking;
-    // });
-
-    // d3.selectAll(".genreColumn").data(genredata).text(function(d) {
-    //     return d.genre;
-    // });
+    d3.selectAll(".genreColumn").data(genredata).text(function(d) {
+        return d.genre;
+    });
 }
 
 // Update table
