@@ -165,14 +165,18 @@ async function getData(res, promises) {
 
         // For each array, make a request with .getTracks()
         let genresArray = [];
+        let imageArray = [];
         for (let artistArray in artistArrays) {
           let artists = await spotifyApi.getArtists(artistArrays[artistArray]);
           for (let artist in artists.body.artists) {
             if (artists.body.artists[artist] != null) {
               genresArray.push(artists.body.artists[artist].genres);
+              imageArray.push(artists.body.artists[artist].images);
             }
-            else 
+            else {
               genresArray.push(["unknown"]);
+              imageArray.push("unknown");     // TODO: Maybe change to url of white image?
+            }
           }
         }
 
@@ -182,7 +186,11 @@ async function getData(res, promises) {
           song_data.push({ 
               'track_id': trackIds[song_idx],
               'album_name': song.track.album.name,
-              'artists': song.track.artists[0].name,
+              'artists': {
+                  'name': song.track.artists[0].name,
+                  'genres': genresArray[song_idx],
+                  'image': imageArray[song_idx],
+              },
               'song_name': song.track.name,
               'genres': genresArray[song_idx],
               'popularity': song.track.popularity,
