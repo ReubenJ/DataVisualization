@@ -51,22 +51,24 @@ export function topGenreTable(genredata) {
     let columns = ["Ranking", "Genre"];
     let table = d3.select("#genretable").select("table");
     let tbody = table.select("tbody");
-    const rows = tbody.selectAll("tr")
+    let rows = tbody.selectAll("tr")
         .data(genredata.filter(g => g.ranking !== undefined), d => d.ranking)
-        .join("tr")
-        .attr("id", d => `genreRow-${d.genre.replace(" ", "-").replace("&", "")}`);
-
 
     // Remove any old data
     tbody.selectAll("tr").data(genredata).exit().remove();
 
-    // Put data in respective position    
-    rows.append("td")
+    // Put data in respective position   
+    let rowsEnter = rows.enter()
+        .append("tr")
+        .attr("id", d => `genreRow-${d.genre.replace(" ", "-").replace("&", "")}`);
+
+
+    rowsEnter.append("td")
         .attr("class", "rankingColumn")
         .text(d => d.ranking)
         .attr("rank", d => d.rank);
     
-    rows.append("td")
+    rowsEnter.append("td")
         .attr("class", "genreColumn")
         .text(d => d.genre)
         .attr("id", d => d.genre);
@@ -144,6 +146,7 @@ export function updateSongTable(currentlySelectedSongs, data) {
                     currentlySelectedSongs[1] = data.songs[song];
                     pushBack = true;
                 }
+                // Update radar chart
                 drawRadarChart();
                 return;
             }
