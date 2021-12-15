@@ -61,19 +61,53 @@
 ## Problem Analysis
 How clearly is the problem described in terms of visualization?
 
+#### Introduction
+- Introduction of Spotify dataset
+- Introduction of our research questions
+- Motivation for our research questions
+
+#### How the visualization help us answer this
+- Is our problem answerable through just the visualizations
+- Why our problem is answerable. (Its non trivial to manually look this up in the dataset)
+- How visualizations simplify the answering to just a simple visual activity
+
+
+
 ## Justification
 How well are the proposed solutions justified?
 
+- We must explain why we chose for these graphs as opposed to others. Justify it properly.
+- We must mention what other graphs were considered and why they were not chosen. 
+### Force graph
+### Tables
+### Radarchart
+
+
+
 ## Evaluation
 How well is the solution evaluated?
+
+- Do the graphs answer our questions to an satisfactory extent?
+- For each graph describe how they contribute to answers we seek
+
 
 ## Discussion
 How well do you asses your solution?
 What improvements do you identify?
 
+- Reflect on our design choices. Does our solution answer the questions well?
+- Are we satisfied with the way we have answered the questions through our visualizations?
+- Why or why not?
+- TBD....
+
+Evaluation and Discussion seem to be similar topics so we need to think about this more.
+
+
+
 ## Structure and presentation
 Make sure document is well structured and well presented.
 See guidelines at the bottom of the assignment pdf.
+
 
 
 # Individual reflection
