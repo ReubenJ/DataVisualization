@@ -52,10 +52,13 @@ export function topGenreTable(genredata) {
     let table = d3.select("#genretable").select("table");
     let tbody = table.select("tbody");
     let rows = tbody.selectAll("tr")
-        .data(genredata.filter(g => g.ranking !== undefined), d => d.ranking)
+        .data(genredata.filter(g => g.ranking !== undefined), d => `${d.ranking}${d.genre}`);
 
     // Remove any old data
-    tbody.selectAll("tr").data(genredata).exit().remove();
+    tbody.selectAll("tr")
+        .data(genredata.filter(g => g.ranking !== undefined), d => `${d.ranking}${d.genre}`)
+        .exit()
+        .remove();
 
     // Put data in respective position   
     let rowsEnter = rows.enter()

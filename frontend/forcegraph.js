@@ -159,7 +159,12 @@ function ForceGraph({
         // Update new selection styles
         d3.select(this).selectAll("circle")
           .transition()
+            .attr("opacity", "100%")
             .attr("r", expandedRadius);
+
+        d3.select(this).select("image")
+          .transition()
+          .attr("style", "opacity: 100%");
 
         d3.select(this)
           .attr("selected", true)

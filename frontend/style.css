@@ -57,12 +57,8 @@
   background: darkslategray
 } */
 
-/* .dropdown { */
-  /* margin: 1rem; */
-/* } */
-
 #firstRow {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 #force {
