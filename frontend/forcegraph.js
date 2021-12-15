@@ -17,16 +17,16 @@ function ForceGraph({
   nodeTitle, // given d in nodes, a title string
   nodeFill = "currentColor", // node stroke fill (if not using a group color encoding)
   nodeStroke = "#fff", // node stroke color
-  nodeStrokeWidth = "1.5", // node stroke width, in pixels
+  nodeStrokeWidth = "1", // node stroke width, in pixels
   nodeStrokeOpacity = 1, // node stroke opacity
-  nodeRadius = "20", // node radius, in pixels
-  expandedRadius = (3 * parseFloat(nodeRadius)).toString(),
+  nodeRadius = "25", // node radius, in pixels
+  expandedRadius = (6 * parseFloat(nodeRadius)).toString(),
   nodeStrength,
   linkSource = ({source}) => source, // given d in links, returns a node identifier string
   linkTarget = ({target}) => target, // given d in links, returns a node identifier string
   linkStroke = "#999", // link stroke color
   linkStrokeOpacity = 0.6, // link stroke opacity
-  linkStrokeWidth = "0.25em", // given d in links, returns a stroke width in pixels
+  linkStrokeWidth = "0.1em", // given d in links, returns a stroke width in pixels
   linkStrokeLinecap = "round", // link stroke linecap
   linkStrength,
   colors = d3.schemeTableau10, // an array of color strings, for the node groups
@@ -114,6 +114,24 @@ function ForceGraph({
     .attr("clip-path", function(d, i) {return `url(#circularClip-${i})`});
 
   node
+    .on('mouseover', function(e, d) {
+      let mousedOverSel = selected.filter(dSel => dSel.id === d.id)
+      mousedOverSel.select("image")
+        // .transition()
+          .attr("style", "opacity: 100%");
+      mousedOverSel.selectAll("circle")
+        // .transition()
+          .attr("fill-opacity", "100%");
+    })
+    .on("mouseout", function(e, d) {
+      let mouseOutSel = selected.filter(dSel => dSel.id === d.id)
+      mouseOutSel.select("image")
+        // .transition()
+          .attr("style", "opacity: 50%");
+      mouseOutSel.selectAll("circle")
+        // .transition()
+          .attr("fill-opacity", "50%");
+    })
     .on("click", function(e, d) {
         // Clear old selection styles
         selected.select("image")
@@ -121,6 +139,7 @@ function ForceGraph({
             .attr("style", "opacity: 0%;");
         selected.selectAll("circle")
           .transition()
+            .attr("fill-opacity", "50%")
             .attr("r", nodeRadius);
         selected.attr("selected", null);
         
@@ -140,8 +159,6 @@ function ForceGraph({
         // Update new selection styles
         d3.select(this).selectAll("circle")
           .transition()
-            .attr("stroke-width", "2.5")
-            .attr("stroke-color", "black")
             .attr("fill-opacity", "100%")
             .attr("r", expandedRadius);
         d3.select(this).select("image")
@@ -153,14 +170,15 @@ function ForceGraph({
           .raise();
 
         selected = d3.select(this);
-
+        
+        // update genre table
         selected.each(function(d) {
           console.log(G[d.id]);
           for (let g in G[d.id]) {
             let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
             d3.select(id)
               .lower()
-              .select(".genreColumn")
+              .selectAll("td")
               .attr("style", "background-color: #fff; color: #000");
           }
         })
@@ -179,6 +197,7 @@ function ForceGraph({
         selected
           .selectAll("circle")
           .transition()
+            .attr("fill-opacity", "50%")
             .attr("r", nodeRadius);
 
         // Clear selection for genre table as well
@@ -199,7 +218,7 @@ function ForceGraph({
     });
 
   if (W) link.attr("stroke-width", ({index: i}) => W[i]);
-  if (G) node.attr("fill", ({index: i}) => color(G[i][0]));
+  if (G) node.attr("fill", ({index: i}) => "#aaa"); //color(G[i][0]));
   if (T) node.append("title").text(({index: i}) => T[i]);
   if (invalidation != null) invalidation.then(() => simulation.stop());
 
@@ -306,7 +325,7 @@ export function buildForceGraph(currentPlaylist) {
       nodeGroup: d => d.group,
       nodeTitle: d => `Artist: ${d.name}\nGenres: ${d.group.join(", ")}`,
       linkStrokeWidth: l => Math.sqrt(l.value),
-      nodeRadius: "4",
+      nodeRadius: "6",
       width: window.innerWidth.toString(),
       height: (0.7 * window.innerHeight).toString()
   });

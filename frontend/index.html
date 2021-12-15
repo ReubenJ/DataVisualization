@@ -45,13 +45,29 @@
         
       <section class="bg-dark text-light p-5 text-center">
         <div class="container">
-          <div class="dropdown">
-            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-              Select Playlist
-            </button>
-            <ul class="dropdown-menu" id="playlists" aria-labelledby="dropdownMenuButton1">
-              <!-- <li><a class="dropdown-item active" href="#" aria-current="true">Action</a></li> -->
-            </ul>
+          <div class="row" id="firstRow">
+            <div class="col-8">
+              <h3>Select an artist</h3>
+              <p style="text-align: left;">Each dot represents an artists present within the playlist. Click on a dot to select the artist, highlight all related genres, and songs. Hover over a dot to see the artists and associated genres.</p>
+            </div>
+            <div class="col-sm">
+              <div class="dropdown">
+                <button style="background-color:#1DB954; border-color: #1DB954;" class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" trigger="click hover focus">
+                  Select Playlist
+                </button>
+                <ul class="dropdown-menu" id="playlists" aria-labelledby="dropdownMenuButton1">
+                  <!-- <li><a class="dropdown-item active" href="#" aria-current="true">Action</a></li> -->
+                </ul>
+              </div>
+              <div style="padding-top: 0.5rem;">
+                <a href="#" data-toggle="tooltip" data-placement="bottom"
+                title="For the purpose of delivering a statically-viewable product, the Spotify data here is fixed (provided by our group member, Haoran)."
+                >
+                <small>Can I add my own?</small></a>
+              </div>
+              
+            </div>
+          
           </div>
           <!-- Row 1 -->
           <div class="row">
