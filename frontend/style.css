@@ -1,54 +1,10 @@
-/* #songtable {
-    margin: 50px;
-  }
-  p {
-   margin: 20px 0; 
-  }
-
-  /* 
-  Generic Styling, for Desktops/Laptops 
-  */
-  /* table { 
-      width: 100%; 
-      border-collapse: collapse; 
-  } */
-  /* Zebra striping */
-  /* tr:nth-of-type(odd) { 
-      background: #eee; 
-  }
-  th { 
-      background: #333; 
-      color: white; 
-      font-weight: bold; 
-      cursor: s-resize;
-      background-repeat: no-repeat;
-      background-position: 3% center;
-  }
-  td, th { 
-      padding: 6px; 
-      border: 1px solid #ccc; 
-      text-align: left; 
-  }
-  
-  th.des:after {
-    content: "\21E9";
-  }
-  
-  th.aes:after {
-    content: "\21E7";
-  } */
-
-#songtable {
+.musictables {
   height: 700px;
   overflow: auto;
   font-family: monospace;
 }
 
-/* #songtable th {
-  
-} */
-
-#songtable thead th {
+.musictables thead th {
 	font-weight: bold;
 	text-align: left;
 	border: none;
@@ -59,12 +15,12 @@
 	border-right: 1px solid #ddd;
 }
 
-#songtable tbody td {
+.musictables tbody td {
   text-align: left;
   border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
-	padding: 10px 15px;
-	font-size: 15px;
+	padding: 5px 5px 5px 5px;
+	font-size: 12px;
 	vertical-align: top;
   border-bottom: 0.5px solid lightgray;
 }
@@ -74,36 +30,6 @@
   cursor: pointer;
 }
 
-#genretable {
-  height: 700px;
-  overflow: auto;
-  font-family: monospace;
-}
-
-/* #songtable th {
-  
-} */
-
-#genretable thead th {
-	font-weight: bold;
-	text-align: left;
-	border: none;
-	padding: 10px 15px;
-	background: gray;
-	font-size: 14px;
-	border-left: 1px solid #ddd;
-	border-right: 1px solid #ddd;
-}
-
-#genretable tbody td {
-  text-align: left;
-  border-left: 1px solid #ddd;
-	border-right: 1px solid #ddd;
-	padding: 10px 15px;
-	font-size: 15px;
-	vertical-align: top;
-  border-bottom: 0.5px solid lightgray;
-}
 
 /* .infocard-header {
   padding: 10px;
