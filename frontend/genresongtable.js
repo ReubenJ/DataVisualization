@@ -58,7 +58,7 @@ export function topGenreTable(genredata) {
 
 
     // Remove any old data
-    // tbody.selectAll("tr").data(genredata).exit().remove();
+    tbody.selectAll("tr").data(genredata).exit().remove();
 
     // Put data in respective position    
     rows.append("td")
@@ -129,10 +129,11 @@ export function updateSongTable(currentlySelectedSongs, data) {
         });
     
     // Make rows clickable for usage in radarchart
-    rows.on("click", (d) => {
+    rowsEnter.on("click", (d) => {
+        let clickedSong = d.originalTarget.__data__.track;
         // Handles connection with the radar chart
         for (let song in data.songs) {
-            if (data.songs[song].song_name == d.track) {
+            if (data.songs[song].song_name == clickedSong) {
                 if (pushBack) {
                     // arr[0] = new song
                     currentlySelectedSongs[0] = data.songs[song];
@@ -155,6 +156,6 @@ export function updateSongTable(currentlySelectedSongs, data) {
     });
 
     d3.selectAll(".artistColumn").data(songdata).text(function(d) {
-        return d.artist;
+        return d.artist.name;
     });
 }
