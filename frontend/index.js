@@ -16,7 +16,7 @@ function extractStatistics(songs) {
         stats.push([
             {axis: "energy", value: songs[song].statistics.energy },
             {axis: "valence", value: songs[song].statistics.valence },
-            {axis: "liveness", value: songs[song].statistics.liveness },
+            {axis: "acousticness", value: songs[song].statistics.acousticness },
             {axis: "danceability", value: songs[song].statistics.danceability },
             {axis: "speechiness", value: songs[song].statistics.speechiness }
         ]);
