@@ -1,5 +1,8 @@
 import {drawRadarChart} from "./index.js";
 
+// Some data for updating the radarchart based on currently selected songs
+let pushBack = false;
+
 // Initializes the table
 export function initTable(tableId, columnNames) {
     var table = d3.select(tableId).append('table');
@@ -16,7 +19,6 @@ export function initTable(tableId, columnNames) {
 
 export function getTopGenresRanking(data){
     let genreFrequency = {};
-    console.log("genreRankings");
     for (const song in data.songs){
         for (const genre in data.songs[song].genres) {
             var currentGenre = data.songs[song].genres[genre];
@@ -107,13 +109,10 @@ export function updateSongTable(currentlySelectedSongs, data) {
             if (sortAscending) {
                 rows.sort((a, b) => { return b[d] < a[d]; });
                 sortAscending = false;
-                //this.className = 'aes';
             }
             else {
                 rows.sort((a, b) => { return b[d] > a[d]; });
-                sortAscending = true;
-                //this.className = 'des';
-                
+                sortAscending = true;          
             }
         });
     
@@ -142,8 +141,16 @@ export function updateSongTable(currentlySelectedSongs, data) {
         // Handles connection with the radar chart
         for (let song in data.songs) {
             if (data.songs[song].song_name == d.track) {
-                currentlySelectedSongs.shift();
-                currentlySelectedSongs.push(data.songs[song]);
+                if (pushBack) {
+                    // arr[0] = new song
+                    currentlySelectedSongs[0] = data.songs[song];
+                    pushBack = false;
+                }
+                else {
+                    // arr[1] = new song
+                    currentlySelectedSongs[1] = data.songs[song];
+                    pushBack = true;
+                }
                 drawRadarChart();
                 return;
             }

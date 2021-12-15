@@ -26,9 +26,12 @@ function extractStatistics(songs) {
 }
 
 export function drawRadarChart() {
-    // TODO: Put image based on song data 
+    // TODO: Display some basic info of the selected songs
     var songsStats = extractStatistics(currentlySelectedSongs);
     createRadarChart(songsStats);
+    document.getElementById("songname1").innerHTML = currentlySelectedSongs[0].song_name;
+    document.getElementById("songname2").innerHTML = currentlySelectedSongs[1].song_name;
+    
 }
 
 function getPlaylist(playlists, playlistName){
@@ -43,8 +46,6 @@ function createDropdownMenu(playlists) {
     // Add playlist names in the dropdown menu
     var playlist_items = [];
     $.each(playlists, function(val, text) {
-        console.log(val);
-        console.log(text['name']);
         playlist_items.push('<li><a class="dropdown-item" href=#>' + text['name'] + '</a></li>');
     });
     $('#playlists').append(playlist_items.join(''));
@@ -67,7 +68,6 @@ function createDropdownMenu(playlists) {
 
         updateSongTable(currentlySelectedSongs, currentPlaylist);
         let genreRanking = getTopGenresRanking(currentPlaylist)
-        console.log(genreRanking);
         topGenreTable(genreRanking);
         drawRadarChart();
         
@@ -93,8 +93,10 @@ function main() {
         updateSongTable(currentlySelectedSongs, currentPlaylist);
         
         // Draw radar chart
+        var songsStats = extractStatistics(currentlySelectedSongs);
+        createRadarChart(songsStats);
         drawRadarChart();
-
+        
         // Draw genre table
         initTable('#genretable', ["ranking", "genre"]);
         let genreRanking = getTopGenresRanking(currentPlaylist)
