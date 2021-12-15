@@ -149,7 +149,7 @@ function ForceGraph({
           for (let g in G[d.id]) {
             let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
             d3.select(id)
-              .select(".genreColumn")
+              .selectAll("td")
               .attr("style", "background-color: none; color: #fff");
           };
           d3.select("#genretable").selectAll("tr").filter(d => d !== undefined)
@@ -206,7 +206,7 @@ function ForceGraph({
           for (let g in G[d.id]) {
             let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
             d3.select(id)
-              .select(".genreColumn")
+              .selectAll("td")
               .attr("style", "background-color: none; color: #fff");
           };
           d3.select("#genretable").selectAll("tr").filter(d => d !== undefined)
