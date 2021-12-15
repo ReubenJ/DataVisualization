@@ -1,5 +1,7 @@
+import * as d3 from "https://cdn.skypack.dev/d3@7";
 import { initTable, updateSongTable, getTopGenresRanking, topGenreTable} from "./genresongtable.js";
 import { createRadarChart } from "./radar-chart.js";
+import { buildForceGraph } from "./forcegraph.js";
 
 // Common data that is used by the graphs
 var currentPlaylist;
@@ -14,11 +16,11 @@ function extractStatistics(songs) {
     // }
     for (var song in songs) {
         stats.push([
-            {axis: "energy", value: songs[song].statistics.energy },
-            {axis: "valence", value: songs[song].statistics.valence },
-            {axis: "liveness", value: songs[song].statistics.liveness },
-            {axis: "danceability", value: songs[song].statistics.danceability },
-            {axis: "speechiness", value: songs[song].statistics.speechiness }
+            {axis: "Energy", value: songs[song].statistics.energy },
+            {axis: "Valence", value: songs[song].statistics.valence },
+            {axis: "Liveness", value: songs[song].statistics.liveness },
+            {axis: "Danceability", value: songs[song].statistics.danceability },
+            {axis: "Speechiness", value: songs[song].statistics.speechiness }
         ]);
     }
 
@@ -34,50 +36,47 @@ export function drawRadarChart() {
     
 }
 
-function getPlaylist(playlists, playlistName){
-    for(var i = 0; i < playlists.length; i++){
-        if (playlists[i]['name'] == playlistName) {
-            return playlists[i];
-        }
-    }
-}
+// function getPlaylist(playlists, playlistName){
+//     for(var i = 0; i < playlists.length; i++){
+//         if (playlists[i]['name'] == playlistName) {
+//             return playlists[i];
+//         }
+//     }
+// }
 
 function createDropdownMenu(playlists) {
     // Add playlist names in the dropdown menu
-    var playlist_items = [];
-    $.each(playlists, function(val, text) {
-        playlist_items.push('<li><a class="dropdown-item" href=#>' + text['name'] + '</a></li>');
-    });
-    $('#playlists').append(playlist_items.join(''));
+    const getName = p => p.name;
+    d3.select("#playlists")
+        .selectAll("li")
+        .data(playlists.map(playlist => playlist.name))
+        .join("li")
+            .append("a")
+                .attr("class", "dropdown-item")
+                .attr("href", "#")
+                .text(d => d)
+                .on("click", function(e, d) {
+                    currentPlaylist = playlists[playlists.map(getName).indexOf(d)];
+                    d3.select("#dropdownMenuButton1")
+                        .text(`Selected Playlist: ${d}`);
 
-    $('#playlists li a').click(function(e) 
-    { 
-        e.preventDefault();
-        $('#playlists .active').attr('aria-current', 'false');
-        $('#playlists .active').removeClass('active');
-        
-        $(this).addClass('active');
-        $(this).attr('aria-current', 'true');
+                    // Reset playlist data when changing playlists
+                    currentlySelectedSongs = [];
+                    currentlySelectedSongs.push(currentPlaylist.songs[0]);
+                    currentlySelectedSongs.push(currentPlaylist.songs[1]);
 
-        
-        // Reset playlist data when changing playlists
-        currentPlaylist = getPlaylist(playlists, $(this).text());
-        currentlySelectedSongs = [];
-        currentlySelectedSongs.push(currentPlaylist.songs[0]);
-        currentlySelectedSongs.push(currentPlaylist.songs[1]);
-
-        updateSongTable(currentlySelectedSongs, currentPlaylist);
-        let genreRanking = getTopGenresRanking(currentPlaylist)
-        topGenreTable(genreRanking);
-        drawRadarChart();
-        
-        return false 
-    });
+                    updateSongTable(currentlySelectedSongs, currentPlaylist);
+                    let genreRanking = getTopGenresRanking(currentPlaylist)
+                    // console.log(genreRanking);
+                    topGenreTable(genreRanking);
+                    drawRadarChart();
+                    buildForceGraph(currentPlaylist);
+                });
 }
 
 function main() {
     // Structure json data 
-    $.getJSON("playlists_data.json", (json) => {
+    $.getJSON("../backend/playlists_data.json", (json) => {
         var playlists = json;
 
         // Create dropdown menu
@@ -98,11 +97,12 @@ function main() {
         drawRadarChart();
         
         // Draw genre table
-        initTable('#genretable', ["ranking", "genre"]);
+        initTable('#genretable', ["Ranking", "Genre"]);
         let genreRanking = getTopGenresRanking(currentPlaylist)
         topGenreTable(genreRanking);
-    });
 
+        buildForceGraph(currentPlaylist);
+    });
 }
 
 main();

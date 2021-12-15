@@ -1,3 +1,4 @@
+import * as d3 from "https://cdn.skypack.dev/d3@7";
 import {drawRadarChart} from "./index.js";
 
 // Some data for updating the radarchart based on currently selected songs
@@ -5,15 +6,15 @@ let pushBack = false;
 
 // Initializes the table
 export function initTable(tableId, columnNames) {
-    var table = d3.select(tableId).append('table');
-    table.append('tbody');
-    table.select('tbody').selectAll('tr');
+    var table = d3.select(tableId).append("table");
+    table.append("tbody");
+    table.select("tbody").selectAll("tr");
 
-    table.append('thead')
-        .append('tr')
-        .selectAll('th')
+    table.append("thead")
+        .append("tr")
+        .selectAll("th")
         .data(columnNames).enter()
-        .append('th')
+        .append("th")
         .text((d) => { return d; })
 }
 
@@ -47,37 +48,28 @@ export function getTopGenresRanking(data){
 
 export function topGenreTable(genredata) {
     // Initialize D3 stuff
-    let columns = ["ranking", "genre"];
-    let table = d3.select('#genretable').select('table');
-    let tbody = table.select('tbody');
-    var rows = tbody.selectAll('tr')
-		  .data(genredata)
-		  .enter()
-		  .append('tr');
-    
+    let columns = ["Ranking", "Genre"];
+    let table = d3.select("#genretable").select("table");
+    let tbody = table.select("tbody");
+    const rows = tbody.selectAll("tr")
+        .data(genredata.filter(g => g.ranking !== undefined), d => d.ranking)
+        .join("tr")
+        .attr("id", d => `genreRow-${d.genre.replace(" ", "-").replace("&", "")}`);
+
+
     // Remove any old data
-    tbody.selectAll('tr').data(genredata).exit().remove();
+    // tbody.selectAll("tr").data(genredata).exit().remove();
 
     // Put data in respective position    
-    rows.append('td')
+    rows.append("td")
         .attr("class", "rankingColumn")
-        .text(function(d) {
-            return d.id;
-        });
+        .text(d => d.ranking)
+        .attr("rank", d => d.rank);
     
-    rows.append('td')
+    rows.append("td")
         .attr("class", "genreColumn")
-        .text(function(d) {
-            return d.id;
-        });
-    
-    d3.selectAll(".rankingColumn").data(genredata).text(function(d) {
-        return d.ranking;
-    });
-
-    d3.selectAll(".genreColumn").data(genredata).text(function(d) {
-        return d.genre;
-    });
+        .text(d => d.genre)
+        .attr("id", d => d.genre);
 }
 
 // Update table
@@ -93,19 +85,19 @@ export function updateSongTable(currentlySelectedSongs, data) {
         });
     
     // Initialize d3 stuff
-    let table = d3.select('#songtable').select('table');
-    let tbody = table.select('tbody');
-    let rows = tbody.selectAll('tr')
+    let table = d3.select("#songtable").select("table");
+    let tbody = table.select("tbody");
+    let rows = tbody.selectAll("tr")
         .data(songdata);
     
     // Remove any old data
     rows.exit().remove();
     
     // Make headers clickable for sorting
-    let headers = table.select('thead')
-        .selectAll('th')
-        .on('click', (d) => {
-            headers.attr('class', 'header');
+    let headers = table.select("thead")
+        .selectAll("th")
+        .on("click", (d) => {
+            headers.attr("class", "header");
             if (sortAscending) {
                 rows.sort((a, b) => { return b[d] < a[d]; });
                 sortAscending = false;
@@ -118,26 +110,26 @@ export function updateSongTable(currentlySelectedSongs, data) {
     
     // Prepare rows and fill with data
     let rowsEnter = rows.enter()
-        .append('tr')
-        .attr('class', 'clickable-row')
-        .attr('id', (d) => {
-            return 'row' + songdata.indexOf(d);
+        .append("tr")
+        .attr("class", "clickable-row")
+        .attr("id", (d) => {
+            return "row" + songdata.indexOf(d);
         });
 
-    rowsEnter.append('td')
+    rowsEnter.append("td")
         .attr("class", "trackColumn")
         .text(function(d) {
             return d.id;
         });
     
-    rowsEnter.append('td')
+    rowsEnter.append("td")
         .attr("class", "artistColumn")
         .text(function(d) {
             return d.id;
         });
     
     // Make rows clickable for usage in radarchart
-    rows.on('click', (d) => {
+    rows.on("click", (d) => {
         // Handles connection with the radar chart
         for (let song in data.songs) {
             if (data.songs[song].song_name == d.track) {

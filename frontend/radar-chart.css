@@ -1,4 +1,4 @@
-body {
+/* body {
   font-family: 'Open Sans', sans-serif;
   font-size: 11px;
   font-weight: 300;
@@ -6,13 +6,19 @@ body {
   text-align: center;
   text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff;
   cursor: default;
-}
+} */
 
 .legend {
   font-family: 'Raleway', sans-serif;
-  fill: #333333;
+  font-weight: 800;
+  font-size: 15pt;
+  fill: #fff;
 }
 
 .tooltip {
-  fill: #333333;
+  fill: #fff;
+}
+
+.axisLabel {
+  fill: #fff;
 }

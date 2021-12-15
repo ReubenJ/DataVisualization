@@ -1,5 +1,4 @@
 import * as d3 from "https://cdn.skypack.dev/d3@7";
-// import { readFile } from 'fs';
 
 // Modified from
 // Copyright 2021 Observable, Inc.
@@ -12,6 +11,7 @@ function ForceGraph({
   links // an iterable of link objects (typically [{source, target}, …])
 }, {
   nodeId = d => d.id, // given d in nodes, returns a unique identifier (string)
+  nodeImage = d => d.url,
   nodeGroup, // given d in nodes, returns an (ordinal) value for color
   nodeGroups, // an array of ordinal values representing the node groups
   nodeTitle, // given d in nodes, a title string
@@ -19,7 +19,8 @@ function ForceGraph({
   nodeStroke = "#fff", // node stroke color
   nodeStrokeWidth = "1.5", // node stroke width, in pixels
   nodeStrokeOpacity = 1, // node stroke opacity
-  nodeRadius = "0.8em", // node radius, in pixels
+  nodeRadius = "20", // node radius, in pixels
+  expandedRadius = (3 * parseFloat(nodeRadius)).toString(),
   nodeStrength,
   linkSource = ({source}) => source, // given d in links, returns a node identifier string
   linkTarget = ({target}) => target, // given d in links, returns a node identifier string
@@ -41,6 +42,7 @@ function ForceGraph({
   const T = nodeTitle == null ? null : d3.map(nodes, nodeTitle);
   const G = nodeGroup == null ? null : d3.map(nodes, nodeGroup).map(intern);
   const W = typeof linkStrokeWidth !== "function" ? null : d3.map(links, linkStrokeWidth);
+  const I = d3.map(nodes, nodeImage);
 
   // Replace the input nodes and links with mutable objects for the simulation.
   nodes = d3.map(nodes, (_, i) => ({id: N[i]}));
@@ -70,11 +72,6 @@ function ForceGraph({
       .attr("viewBox", [-width / 2, -height / 2, width, height])
       .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
-  svg.append("defs").append("clipPath")
-    .attr("id", "circularClip")
-    .append("circle")
-    .attr("r", 20);
-
   const link = svg.append("g")
       .attr("stroke", linkStroke)
       .attr("stroke-opacity", linkStrokeOpacity)
@@ -87,6 +84,7 @@ function ForceGraph({
   const node = svg.append("g")
       .attr("fill", nodeFill)
       .attr("stroke", nodeStroke)
+      .attr("fill-opacity", "50%")
       .attr("stroke-opacity", nodeStrokeOpacity)
       .attr("stroke-width", nodeStrokeWidth)
     .selectAll("circle")
@@ -95,6 +93,9 @@ function ForceGraph({
       .attr("r", nodeRadius)
       .call(drag(simulation));
 
+  var selected = d3.select(null);
+
+  // Add circular clip path to mask image
   node.append("clipPath")
     .attr("id", function(d, i) {return `circularClip-${i}`;})
     .append("circle")
@@ -103,34 +104,102 @@ function ForceGraph({
   node.append("circle")
     .attr("r", nodeRadius);
   
+  // Add image tag
   node.append("image")
-    .attr("href", "public/jobim.png")
+    .attr("href", function(d, i) {return I[i]})
     .attr("height", "50")
     .attr("width", "50")
     .attr("style", "opacity: 0%;")
-    .attr("clip-path", function(d, i) {return `url(#circularClip-${i})`;})
-    .on('mouseover', function() {
-      d3.select(this)
-        .transition()
-          .attr("style", "opacity: 100%;");
-    })
-    .on('mouseout', function(e, d) {
-      if (d.id !== selectedArtist) {
+    // This contrains the image to the circle
+    .attr("clip-path", function(d, i) {return `url(#circularClip-${i})`});
+
+  node
+    .on("click", function(e, d) {
+        // Clear old selection styles
+        selected.select("image")
+          .transition()
+            .attr("style", "opacity: 0%;");
+        selected.selectAll("circle")
+          .transition()
+            .attr("r", nodeRadius);
+        selected.attr("selected", null);
+        
+        // Clear selection for genre table as well
+        selected.each(function(d) {
+          console.log(G[d.id]);
+          for (let g in G[d.id]) {
+            let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
+            d3.select(id)
+              .select(".genreColumn")
+              .attr("style", "background-color: none; color: #fff");
+          };
+          d3.select("#genretable").selectAll("tr").filter(d => d !== undefined)
+            .sort((a, b) => d3.ascending(a.ranking, b.ranking));
+        });
+
+        // Update new selection styles
+        d3.select(this).selectAll("circle")
+          .transition()
+            .attr("stroke-width", "2.5")
+            .attr("stroke-color", "black")
+            .attr("fill-opacity", "100%")
+            .attr("r", expandedRadius);
+        d3.select(this).select("image")
+          .transition()
+            .attr("style", "opacity: 100%;");
+
         d3.select(this)
-        .transition()
-          .attr("style", "opacity: 0%;");
-      } 
-    })
-    .on('click', function(e, d) {
-      node
-        .select("image")
-        .filter((d) => d.id === selectedArtist)
-        .attr("style", "opacity: 0%;");
-      selectedArtist = d.id;
+          .attr("selected", true)
+          .raise();
+
+        selected = d3.select(this);
+
+        selected.each(function(d) {
+          console.log(G[d.id]);
+          for (let g in G[d.id]) {
+            let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
+            d3.select(id)
+              .lower()
+              .select(".genreColumn")
+              .attr("style", "background-color: #fff; color: #000");
+          }
+        })
+        
+        e.stopPropagation();
+      }
+    );
+
+  svg
+    .on('click', function() {
+      if (selected.size() > 0) {
+        selected
+          .select("image")
+          .transition()
+            .attr("style", "opacity: 0%;");
+        selected
+          .selectAll("circle")
+          .transition()
+            .attr("r", nodeRadius);
+
+        // Clear selection for genre table as well
+        selected.each(function(d) {
+          console.log(G[d.id]);
+          for (let g in G[d.id]) {
+            let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
+            d3.select(id)
+              .select(".genreColumn")
+              .attr("style", "background-color: none; color: #fff");
+          };
+          d3.select("#genretable").selectAll("tr").filter(d => d !== undefined)
+            .sort((a, b) => d3.ascending(a.ranking, b.ranking));
+        });
+
+        selected = d3.select(null);
+      }
     });
 
   if (W) link.attr("stroke-width", ({index: i}) => W[i]);
-  if (G) node.attr("fill", ({index: i}) => color(G[i]));
+  if (G) node.attr("fill", ({index: i}) => color(G[i][0]));
   if (T) node.append("title").text(({index: i}) => T[i]);
   if (invalidation != null) invalidation.then(() => simulation.stop());
 
@@ -139,21 +208,21 @@ function ForceGraph({
   }
 
   function ticked() {
+    let parsedRadius = parseFloat(expandedRadius) + 5;
     link
       .attr("x1", d => d.source.x)
       .attr("y1", d => d.source.y)
       .attr("x2", d => d.target.x)
       .attr("y2", d => d.target.y);
-
     node
       .select("image")
-      .attr("x", d => d.x - 25)
-      .attr("y", d => d.y - 25);
+      .attr("x", d => (Math.max(parsedRadius, Math.min(width - parsedRadius, d.x + (width / 2))) - 25 - (width / 2)).toString())
+      .attr("y", d => (Math.max(parsedRadius, Math.min(height - parsedRadius, d.y + (height / 2))) - 25 - (height / 2)).toString());
     
     node
       .selectAll("circle")
-      .attr("cx", d => d.x)
-      .attr("cy", d => d.y);
+      .attr("cx", d => (Math.max(parsedRadius, Math.min(width - parsedRadius, d.x + (width / 2))) - (width / 2)).toString())
+      .attr("cy", d => (Math.max(parsedRadius, Math.min(height - parsedRadius, d.y + (height / 2))) - (height / 2)).toString());
     
   }
 
@@ -184,75 +253,66 @@ function ForceGraph({
   return Object.assign(svg.node(), {scales: {color}});
 };
 
-function artists() {
-  var set = new Set();
-  // $.getJSON("playlists_data.json", (json) => {
-  //   $.each(json[0]["songs"], function(val, text) {
-  //     console.log("force " + text["artists"] + " " + set.size);
-  //     set.add(text["artists"]);
-  //     // console.log(text['name']);
-  //     // playlist_items.push('<li><a class="dropdown-item" href=#>' + text['name'] + '</a></li>');
-  //   });
-  // });
-  d3.json("/data", function(data) {
-    console.log("data: " + data);
+function artists(currentPlaylist) {
+  let res = currentPlaylist.songs
+    // Retrieve data needed for artists
+    .map(song => ({
+      name: song.artists.name,
+      group: song.genres,
+      url: song.artists.image[0].url,
+    }))
+    // Remove duplicate artists
+    .filter((item, index) => 
+      currentPlaylist.songs
+        .map(song => song.artists.name).indexOf(item.name) === index
+    )
+    .map((artist, i) => ({
+      id: i,
+      name: artist.name,
+      group: artist.group,
+      url: artist.url
+    })); 
+    return res;
+}
+
+function connections(artists) {
+  let res = artists
+    .map(artist => 
+      artists
+        .filter(otherArtist => artist !== otherArtist)
+        .map(otherArtist => ({
+          source: artist.id,
+          target: otherArtist.id,
+          // how many genres overlap
+          strength: (new Set([...artist.group].filter(x => otherArtist.group.includes(x)))).size
+        }))
+        )
+    .flat()
+    .filter(connection => connection.strength > 0);
+  return res;
+}
+
+export function buildForceGraph(currentPlaylist) {
+  d3.select("#force").select("svg").remove();
+  let artistsArray = artists(currentPlaylist);
+  let connectionsArray = connections(artistsArray);
+  var data = {
+    nodes: artistsArray,
+    links: connectionsArray
+  };
+
+  var chart = ForceGraph(data, {
+      nodeId: d => d.id,
+      nodeGroup: d => d.group,
+      nodeTitle: d => `Artist: ${d.name}\nGenres: ${d.group.join(", ")}`,
+      linkStrokeWidth: l => Math.sqrt(l.value),
+      nodeRadius: "4",
+      width: window.innerWidth.toString(),
+      height: (0.7 * window.innerHeight).toString()
   });
-  // console.log(set.size);
-  // var res = new Array();
-  // for (let item of set.values()) {
-  //   console.log("force ", item);
-  //   res.append({
-  //     id: item,
-  //     group: 1
-  //   });
-  // }
-  // return res;
+
+  d3.select("#force").node().appendChild(chart);
+  // console.log(json[0]["songs"][0]["artists"]);
 }
 
 // console.log(artists());
-
-var data = {
-  nodes: [
-    {
-        id: "firstnode",
-        group: 1
-    },
-    {
-        id: "secondnode",
-        group: 2
-    },
-    {
-        id: "thirdnode",
-        group: 2
-    },
-    {
-        id: "fourthnode",
-        group: 5
-    }
-  ],
-  links: [
-    {
-      source: "firstnode",
-      target: "secondnode",
-      value: 1
-    },
-    {
-        source: "secondnode",
-        target: "thirdnode",
-        value: 30
-    }
-  ]
-  
-};
-
-var selectedArtist = null;
-
-var chart = ForceGraph(data, {
-    nodeId: d => d.id,
-    nodeGroup: d => d.group,
-    nodeTitle: d => `${d.id}\n${d.group}`,
-    linkStrokeWidth: l => Math.sqrt(l.value)
-});
-
-artists();
-d3.select("#force").node().appendChild(chart);
