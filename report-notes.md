@@ -52,8 +52,29 @@
         - How is it shown:
             Using HTML and JS (D3 library). Not nessecary to go into detail here for the paper.
 
-        - Weaknesses
+        - Weaknesses:
+            TBD???
+
 
 
 # What to write in the paper:
+## Problem Analysis
+How clearly is the problem described in terms of visualization?
 
+## Justification
+How well are the proposed solutions justified?
+
+## Evaluation
+How well is the solution evaluated?
+
+## Discussion
+How well do you asses your solution?
+What improvements do you identify?
+
+## Structure and presentation
+Make sure document is well structured and well presented.
+See guidelines at the bottom of the assignment pdf.
+
+
+# Individual reflection
+We also have to write an individual reflection where we detail our individual contribution.
