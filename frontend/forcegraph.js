@@ -217,19 +217,13 @@ function ForceGraph({
           .attr("r", nodeRadius);
 
       // Clear selection for genre table as well
-      selected.each(function(d) {
-        console.log(G[d.id]);
-        d3.selectAll("[id^=genreRow-]")
-          .attr("style", "opacity: 100%;");
-        for (let g in G[d.id]) {
-          let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
-          d3.select(id)
-            .selectAll("td")
+      d3.selectAll("[id^=genreRow]")
+          .attr("style", "opacity: 100%;")
+          .filter(d => d !== undefined)
+          .sort((a, b) => d3.ascending(a.ranking, b.ranking))
+          .selectAll("td")
             .attr("style", "background-color: none; color: #fff");
-        };
-        d3.select("#genretable").selectAll("tr").filter(d => d !== undefined)
-          .sort((a, b) => d3.ascending(a.ranking, b.ranking));
-      });
+      selected.attr("selected", null);
 
       selected = d3.select(null);
     }

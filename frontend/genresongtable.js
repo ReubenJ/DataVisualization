@@ -118,13 +118,11 @@ export function topGenreTable(genredata, data) {
         let song_tbody = song_table.select("tbody");
         let song_rows = song_tbody.selectAll("tr");
 
-        // song_rows.filter(function(){
-        //     return d3.select(this).text() == "BonesRadiohead"
-        // })
-        // .attr("style", "background-color: #fff; color: #000;");
+        // Deselect songs from the previously selected genre
         song_rows
             .attr("style", "background-color: none; color: #fff");
-            
+
+        // Select songs from the genre clicked on
         for (const song in genreSongs){
             console.log(song);
             song_rows.filter(function(){
@@ -133,7 +131,19 @@ export function topGenreTable(genredata, data) {
             .attr("style", "background-color: #fff; color: #000;");
         }
         
-    })
+        d3.select("#resetGenre")
+        .on("click", function() {
+            d3.selectAll("")
+            d3.selectAll("[id^=genreRow-]")
+                .attr("style", "opacity: 100%;")
+                .filter(d => d !== undefined)
+                .sort((a, b) => d3.ascending(a.ranking, b.ranking))
+                .selectAll("td")
+                .attr("style", "background-color: none; color: #fff");
+
+        });
+
+    });
 
 }
 

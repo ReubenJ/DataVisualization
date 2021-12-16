@@ -110,7 +110,7 @@ function main() {
         // Draw genre table
         initTable('#genretable', ["Ranking", "Genre"]);
         let genreRanking = getTopGenresRanking(currentPlaylist)
-        topGenreTable(genreRanking);
+        topGenreTable(genreRanking, currentPlaylist);
 
         buildForceGraph(currentPlaylist);
     });
