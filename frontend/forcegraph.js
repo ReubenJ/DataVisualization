@@ -205,35 +205,29 @@ function ForceGraph({
 
   svg
     .on('click', function() {
-      if (selected.size() > 0) {
-        selected
-          .select("image")
-          .transition()
-            .attr("style", "opacity: 0%;");
-        selected
-          .selectAll("circle")
-          .transition()
-            .attr("fill-opacity", "50%")
-            .attr("r", nodeRadius);
+      selected
+        .select("image")
+        .transition()
+          .attr("style", "opacity: 0%;");
+      node
+        .selectAll("circle")
+        .transition()
+          .attr("fill-opacity", "50%")
+          .attr("fill", "#fff")
+          .attr("r", nodeRadius);
 
-        // Clear selection for genre table as well
-        selected.each(function(d) {
-          console.log(G[d.id]);
-          d3.selectAll("[id^=genreRow-]")
-            .attr("style", "opacity: 100%;");
-          for (let g in G[d.id]) {
-            let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
-            d3.select(id)
-              .selectAll("td")
-              .attr("style", "background-color: none; color: #fff");
-          };
-          d3.select("#genretable").selectAll("tr").filter(d => d !== undefined)
-            .sort((a, b) => d3.ascending(a.ranking, b.ranking));
-        });
+      // Clear selection for genre table as well
+      d3.selectAll("[id^=genreRow]")
+          .attr("style", "opacity: 100%;")
+          .filter(d => d !== undefined)
+          .sort((a, b) => d3.ascending(a.ranking, b.ranking))
+          .selectAll("td")
+            .attr("style", "background-color: none; color: #fff");
+      selected.attr("selected", null);
 
-        selected = d3.select(null);
-      }
-    });
+      selected = d3.select(null);
+    }
+    );
 
   if (W) link.attr("stroke-width", ({index: i}) => W[i]);
   if (G) node.attr("fill", ({index: i}) => "#aaa"); //color(G[i][0]));
