@@ -133,6 +133,9 @@ async function getData(res, promises) {
   return new Promise(resolve => {
     Promise.all(promises).then(async (playlists) => {
       let data = []
+      // Make sure that each playlist contains all of its songs. If not fix it by making more api calls
+      
+
       for (let playlist in playlists) {    
         // Get list of track IDs
         let trackIds = [];
