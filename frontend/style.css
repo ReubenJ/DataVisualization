@@ -36,6 +36,7 @@
 }
 
 
+
 /* .infocard-header {
   padding: 10px;
   border-radius: 5px 5px 0 0;
@@ -76,4 +77,12 @@
 .secondRowTitle {
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+
+#songname1 {
+  color: yellow;
+}
+
+#songname2 {
+  color: red;
 }
