@@ -133,14 +133,13 @@ export function topGenreTable(genredata, data) {
         
         d3.select("#resetGenre")
         .on("click", function() {
-            d3.selectAll("")
+            // d3.selectAll("")
             d3.selectAll("[id^=genreRow-]")
                 .attr("style", "opacity: 100%;")
                 .filter(d => d !== undefined)
                 .sort((a, b) => d3.ascending(a.ranking, b.ranking))
                 .selectAll("td")
                 .attr("style", "background-color: none; color: #fff");
-
         });
 
     });
