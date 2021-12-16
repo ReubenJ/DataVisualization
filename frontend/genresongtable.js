@@ -76,6 +76,27 @@ export function topGenreTable(genredata) {
         .attr("class", "genreColumn")
         .text(d => d.genre)
         .attr("id", d => d.genre);
+
+    tbody.selectAll("tr").on("click", function(e, d) {
+        tbody.selectAll("tr").attr("style", "background-color: unset");
+        d3.select(this).attr("style", "background-color: #1DB954");
+        let node = d3.select("#nodeGroup").selectAll("*");
+        node
+            .attr("selected", null)
+            .selectAll("circle")
+            .attr("fill-opacity", "50%")
+            .attr("fill", "#fff")
+            .attr("r", "6");
+        node.selectAll("image")
+            .attr("style", "opacity: 0%");
+        node.filter(dNode => dNode.genres.includes(d.genre))
+            .raise()
+            .selectAll("circle")
+            .attr("fill-opacity", "100%")
+            .attr("fill", "#1DB954")
+            .transition()
+                .attr("r", "10");
+    })
 }
 
 // Update table

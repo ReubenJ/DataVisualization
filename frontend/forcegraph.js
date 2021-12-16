@@ -1,11 +1,12 @@
 import * as d3 from "https://cdn.skypack.dev/d3@7";
 
-// Modified from
 // Copyright 2021 Observable, Inc.
 // Released under the ISC license.
 // https://observablehq.com/@d3/force-directed-graph
 // 
+// Modified for Data Visualization IN4089 InfoViz project
 // Added Node selection
+// Linked to other visualizations
 function ForceGraph({
   nodes, // an iterable of node objects (typically [{id}, …])
   links // an iterable of link objects (typically [{source, target}, …])
@@ -21,14 +22,14 @@ function ForceGraph({
   nodeStrokeOpacity = 1, // node stroke opacity
   nodeRadius = "25", // node radius, in pixels
   expandedRadius = (6 * parseFloat(nodeRadius)).toString(),
-  nodeStrength,
+  nodeStrength = "-100",
   linkSource = ({source}) => source, // given d in links, returns a node identifier string
   linkTarget = ({target}) => target, // given d in links, returns a node identifier string
   linkStroke = "#999", // link stroke color
   linkStrokeOpacity = 0.6, // link stroke opacity
   linkStrokeWidth = "0.1em", // given d in links, returns a stroke width in pixels
   linkStrokeLinecap = "round", // link stroke linecap
-  linkStrength,
+  linkStrength = ".01",
   colors = d3.schemeTableau10, // an array of color strings, for the node groups
   width = 640, // outer width, in pixels
   height = 400, // outer height, in pixels
@@ -45,7 +46,7 @@ function ForceGraph({
   const I = d3.map(nodes, nodeImage);
 
   // Replace the input nodes and links with mutable objects for the simulation.
-  nodes = d3.map(nodes, (_, i) => ({id: N[i]}));
+  nodes = d3.map(nodes, (_, i) => ({id: N[i], genres: G[i]}));
   links = d3.map(links, (_, i) => ({source: LS[i], target: LT[i]}));
 
   // Compute default domains.
@@ -81,12 +82,15 @@ function ForceGraph({
     .data(links)
     .join("line");
 
+  console.log(nodes);
+
   const node = svg.append("g")
       .attr("fill", nodeFill)
       .attr("stroke", nodeStroke)
       .attr("fill-opacity", "50%")
       .attr("stroke-opacity", nodeStrokeOpacity)
       .attr("stroke-width", nodeStrokeWidth)
+      .attr("id", "nodeGroup")
     .selectAll("circle")
     .data(nodes)
     .join("g")
@@ -140,8 +144,16 @@ function ForceGraph({
         selected.selectAll("circle")
           .transition()
             .attr("fill-opacity", "50%")
+            .attr("fill", "#fff")
             .attr("r", nodeRadius);
         selected.attr("selected", null);
+        node.selectAll("circle")
+          .attr("fill", "#fff")
+          .attr("fill-opacity", "50%")
+          .attr("r", nodeRadius);
+        d3.select("#genretable").selectAll("tr")
+          .attr("style", "background-color: unset");
+
         
         // Clear selection for genre table as well
         selected.each(function(d) {
@@ -150,7 +162,7 @@ function ForceGraph({
             let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
             d3.select(id)
               .selectAll("td")
-              .attr("style", "background-color: none; color: #fff");
+              .attr("style", "background-color: unset; color: #fff");
           };
           d3.select("#genretable").selectAll("tr").filter(d => d !== undefined)
             .sort((a, b) => d3.ascending(a.ranking, b.ranking));
@@ -175,12 +187,15 @@ function ForceGraph({
         // update genre table
         selected.each(function(d) {
           console.log(G[d.id]);
+          d3.selectAll("[id^=genreRow-]")
+            .attr("style", "opacity: 50%;");
           for (let g in G[d.id]) {
             let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
             d3.select(id)
               .lower()
+              .attr("style", "opacity: 100%;")
               .selectAll("td")
-              .attr("style", "background-color: #fff; color: #000");
+              .attr("style", "background-color: #fff; color: #000;");
           }
         })
         
@@ -204,6 +219,8 @@ function ForceGraph({
         // Clear selection for genre table as well
         selected.each(function(d) {
           console.log(G[d.id]);
+          d3.selectAll("[id^=genreRow-]")
+            .attr("style", "opacity: 100%;");
           for (let g in G[d.id]) {
             let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
             d3.select(id)
@@ -230,10 +247,10 @@ function ForceGraph({
   function ticked() {
     let parsedRadius = parseFloat(expandedRadius) + 5;
     link
-      .attr("x1", d => d.source.x)
-      .attr("y1", d => d.source.y)
-      .attr("x2", d => d.target.x)
-      .attr("y2", d => d.target.y);
+      .attr("x1", d => (Math.max(parsedRadius, Math.min(width - parsedRadius, d.source.x + (width / 2))) - (width / 2)).toString())
+      .attr("y1", d => (Math.max(parsedRadius, Math.min(height - parsedRadius, d.source.y + (height / 2))) - (height / 2)).toString())
+      .attr("x2", d => (Math.max(parsedRadius, Math.min(width - parsedRadius,  d.target.x + (width / 2))) - (width / 2)).toString())
+      .attr("y2", d => (Math.max(parsedRadius, Math.min(height - parsedRadius, d.target.y + (height / 2))) - (height / 2)).toString());
     node
       .select("image")
       .attr("x", d => (Math.max(parsedRadius, Math.min(width - parsedRadius, d.x + (width / 2))) - 25 - (width / 2)).toString())
