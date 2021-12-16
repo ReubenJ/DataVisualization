@@ -3,6 +3,7 @@ import {drawRadarChart} from "./index.js";
 
 // Some data for updating the radarchart based on currently selected songs
 let pushBack = false;
+let currentPlaylist;
 
 // Initializes the table
 export function initTable(tableId, columnNames) {
@@ -79,8 +80,12 @@ export function topGenreTable(genredata) {
 
 // Update table
 export function updateSongTable(currentlySelectedSongs, data) {
+    // console.log("current playlist is: ");
+    // console.log(data);
+
     let songdata = [];
     let sortAscending = true;
+    currentPlaylist = data;
 
     // Prepare song data
     for (const song in data.songs) 
@@ -94,7 +99,7 @@ export function updateSongTable(currentlySelectedSongs, data) {
     let tbody = table.select("tbody");
     let rows = tbody.selectAll("tr")
         .data(songdata);
-    
+
     // Remove any old data
     rows.exit().remove();
     
@@ -132,25 +137,29 @@ export function updateSongTable(currentlySelectedSongs, data) {
         .text(function(d) {
             return d.id;
         });
-    
+
+
     // Make rows clickable for usage in radarchart
     rowsEnter.on("click", (d) => {
+        console.log(currentPlaylist);
         let clickedSong = d.originalTarget.__data__.track;
         // Handles connection with the radar chart
-        for (let song in data.songs) {
-            if (data.songs[song].song_name == clickedSong) {
+        for (let song in currentPlaylist.songs) {
+            //console.log(data.songs[song].song_name);
+            if (currentPlaylist.songs[song].song_name == clickedSong) {
+                console.log("true");
                 if (pushBack) {
                     // arr[0] = new song
-                    currentlySelectedSongs[0] = data.songs[song];
+                    currentlySelectedSongs[0] = currentPlaylist.songs[song];
                     pushBack = false;
                 }
                 else {
                     // arr[1] = new song
-                    currentlySelectedSongs[1] = data.songs[song];
+                    currentlySelectedSongs[1] = currentPlaylist.songs[song];
                     pushBack = true;
                 }
                 // Update radar chart
-                drawRadarChart();
+                drawRadarChart(currentlySelectedSongs);
                 return;
             }
         }

@@ -27,13 +27,16 @@ function extractStatistics(songs) {
     return stats;
 }
 
-export function drawRadarChart() {
+export function drawRadarChart(selectedSongs) {
     // TODO: Display some basic info of the selected songs
-    var songsStats = extractStatistics(currentlySelectedSongs);
-    createRadarChart(songsStats);
+    console.log("current songs: ");
+    console.log(currentlySelectedSongs);
+
+    var songsStats = extractStatistics(selectedSongs);
+    
     document.getElementById("songname1").innerHTML = currentlySelectedSongs[0].song_name;
     document.getElementById("songname2").innerHTML = currentlySelectedSongs[1].song_name;
-    
+    createRadarChart(songsStats);
 }
 
 // function getPlaylist(playlists, playlistName){
@@ -59,17 +62,19 @@ function createDropdownMenu(playlists) {
                     currentPlaylist = playlists[playlists.map(getName).indexOf(d)];
                     d3.select("#dropdownMenuButton1")
                         .text(`Selected Playlist: ${d}`);
-
+                    
+                    
                     // Reset playlist data when changing playlists
-                    currentlySelectedSongs = [];
-                    currentlySelectedSongs.push(currentPlaylist.songs[0]);
-                    currentlySelectedSongs.push(currentPlaylist.songs[1]);
-
+                    currentlySelectedSongs = [currentPlaylist.songs[0], currentPlaylist.songs[1]];
+                    
+                    // Remake visualizations
                     updateSongTable(currentlySelectedSongs, currentPlaylist);
+
                     let genreRanking = getTopGenresRanking(currentPlaylist)
-                    // console.log(genreRanking);
                     topGenreTable(genreRanking);
-                    drawRadarChart();
+
+                    drawRadarChart(currentlySelectedSongs);
+
                     buildForceGraph(currentPlaylist);
                 });
 }
@@ -94,7 +99,7 @@ function main() {
         // Draw radar chart
         var songsStats = extractStatistics(currentlySelectedSongs);
         createRadarChart(songsStats);
-        drawRadarChart();
+        drawRadarChart(currentlySelectedSongs);
         
         // Draw genre table
         initTable('#genretable', ["Ranking", "Genre"]);
