@@ -47,7 +47,7 @@ export function getTopGenresRanking(data){
 }
 
 
-export function topGenreTable(genredata) {
+export function topGenreTable(genredata, data) {
     // Initialize D3 stuff
     let columns = ["Ranking", "Genre"];
     let table = d3.select("#genretable").select("table");
@@ -80,6 +80,8 @@ export function topGenreTable(genredata) {
     tbody.selectAll("tr").on("click", function(e, d) {
         tbody.selectAll("tr").attr("style", "background-color: unset");
         d3.select(this).attr("style", "background-color: #1DB954");
+
+        // Highlight artist node based on selected genre
         let node = d3.select("#nodeGroup").selectAll("*");
         node
             .attr("selected", null)
@@ -96,7 +98,43 @@ export function topGenreTable(genredata) {
             .attr("fill", "#1DB954")
             .transition()
                 .attr("r", "10");
+        
+        // Highlight songs based on selected genre
+        let genreSongs = [];
+        let sortAscending = true;
+    
+        // Prepare song data
+        for (const song in data.songs){
+            for (const genre in data.songs[song].genres){
+                if (d.genre == data.songs[song].genres[genre]){
+                    genreSongs.push(
+                        (data.songs[song].song_name) + data.songs[song].artists.name);
+                }
+            }
+        }
+        console.log(genreSongs);   
+
+        let song_table = d3.select("#songtable").select("table");
+        let song_tbody = song_table.select("tbody");
+        let song_rows = song_tbody.selectAll("tr");
+
+        // song_rows.filter(function(){
+        //     return d3.select(this).text() == "BonesRadiohead"
+        // })
+        // .attr("style", "background-color: #fff; color: #000;");
+        song_rows
+            .attr("style", "background-color: none; color: #fff");
+            
+        for (const song in genreSongs){
+            console.log(song);
+            song_rows.filter(function(){
+                return d3.select(this).text() == genreSongs[song]
+            })
+            .attr("style", "background-color: #fff; color: #000;");
+        }
+        
     })
+
 }
 
 // Update table
@@ -143,9 +181,11 @@ export function updateSongTable(currentlySelectedSongs, data) {
     let rowsEnter = rows.enter()
         .append("tr")
         .attr("class", "clickable-row")
-        .attr("id", (d) => {
-            return "row" + songdata.indexOf(d);
-        });
+        // .attr("id", (d) => {
+
+        //     return "songrow_" +;
+        // })
+        ;
 
     rowsEnter.append("td")
         .attr("class", "trackColumn")
