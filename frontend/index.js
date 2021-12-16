@@ -71,7 +71,7 @@ function createDropdownMenu(playlists) {
                     updateSongTable(currentlySelectedSongs, currentPlaylist);
 
                     let genreRanking = getTopGenresRanking(currentPlaylist)
-                    topGenreTable(genreRanking);
+                    topGenreTable(genreRanking, currentPlaylist);
 
                     drawRadarChart(currentlySelectedSongs);
 
@@ -87,7 +87,7 @@ function main() {
         $('[data-toggle="tooltip"]').tooltip()
     });
     // Structure json data 
-    $.getJSON("../backend/playlists_data.json", (json) => {
+    $.getJSON("playlists_data.json", (json) => {
         var playlists = json;
 
         // Create dropdown menu
