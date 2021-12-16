@@ -28,16 +28,7 @@
                 <li class="nav-item">
                   <a class="nav-link" href="#">Process</a>
                 </li>
-                <!-- <li class="nav-item">
-                  <a href="http://localhost:8888/login" class="nav-link">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a href="http://localhost:8888/data" class="nav-link">Get Data</a>
-                </li> -->
               </ul>
-              <!-- <form class="d-flex">
-                <button class="btn btn-success" type="submit">Login to Spotify</button>
-              </form> -->
             </div>
           </div>
         </nav>
@@ -52,7 +43,7 @@
             </div>
             <div class="col-sm">
               <div class="dropdown" style="text-align: right;">
-                <button style="background-color:#1DB954; border-color: #1DB954;" class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" trigger="click hover focus">
+                <button style="background-color:#1DB954; border-color: #1DB954;" class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" data-toggle="dropdown" aria-expanded="false">
                   Select Playlist
                 </button>
                 <ul class="dropdown-menu" id="playlists" aria-labelledby="dropdownMenuButton1">
@@ -73,23 +64,31 @@
               <div id="force"></div>
             </div>
           </div>
-          <div class="row" style="padding-top: 1rem;">
+          <div class="row">
             <div class="col">
               <!-- Genre Table -->
-              <h4 id="genreTableTitle">Genre Table</h4>
+              <div class="row secondRowTitle">
+                <div class="col"><h4 id="genreTableTitle">Genre Table</h4></div>
+                <div class="col-4">
+                  <button id="resetGenre" style="background-color:#1DB954; border-color: #1DB954;" class="btn btn-success">
+                    <small>Reset Table</small>
+                  </button>
+                </div>
+              </div>
+
               <div id="genretable" class="musictables">
               </div>
             </div>
             <div class="col">
               <!-- Song Table -->
-              <h4 id="songTableTitle">Song Table</h4>
+              <h4 id="songTableTitle" class="secondRowTitle">Song Table</h4>
               <div id="songtable" class="musictables">
               </div>
             </div>
             <div class="col">
               <div class="infocard">
                 <!-- Radar Chart -->
-                <h4>Single Song Stats</h4>
+                <h4 class="secondRowTitle">Single Song Stats</h4>
                 <div class="inforcard-header"></div>
                 <div class="infocard-body"> 
                   <div id="songname1">song1</div>
