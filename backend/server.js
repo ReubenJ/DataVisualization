@@ -29,6 +29,11 @@ const scopes = [
     'user-follow-modify'
   ];
 
+
+// Sneha credentials
+// let client_id = '33198c2c946942fcb4efb7e193864b79';
+// let client_secret = 'c3645983dd8d41e293563592a94841bd';
+  
 let client_id = '2952289f1dcc4380bbec371dfbfce131';
 let client_secret = '56d8f3d3af3848c1a5f365efa6339593';
 
