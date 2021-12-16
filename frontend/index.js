@@ -30,12 +30,12 @@ function extractStatistics(songs) {
 export function drawRadarChart(selectedSongs) {
     // TODO: Display some basic info of the selected songs
     console.log("current songs: ");
-    console.log(currentlySelectedSongs);
+    console.log(selectedSongs);
 
     var songsStats = extractStatistics(selectedSongs);
     
-    document.getElementById("songname1").innerHTML = currentlySelectedSongs[0].song_name;
-    document.getElementById("songname2").innerHTML = currentlySelectedSongs[1].song_name;
+    document.getElementById("songname1").innerHTML = selectedSongs[0].song_name;
+    document.getElementById("songname2").innerHTML = selectedSongs[1].song_name;
     createRadarChart(songsStats);
 }
 
