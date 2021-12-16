@@ -103,7 +103,7 @@ function main() {
         currentlySelectedSongs.push(currentPlaylist.songs[1]);
 
         // Draw song table
-        initTable('#songtable', ["track", "artist"]);
+        initTable('#songtable', ["Track", "Artist"]);
         updateSongTable(currentlySelectedSongs, currentPlaylist);
         
         // Draw radar chart
