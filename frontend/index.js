@@ -60,9 +60,13 @@ function createDropdownMenu(playlists) {
                 .text(d => d)
                 .on("click", function(e, d) {
                     currentPlaylist = playlists[playlists.map(getName).indexOf(d)];
-                    d3.select("#dropdownMenuButton1")
+                    if (d.length > 20) {
+                        d3.select("#dropdownMenuButton1")
+                            .text(`Selected Playlist: ${d.slice(0, 20)}...`);
+                    } else {
+                        d3.select("#dropdownMenuButton1")
                         .text(`Selected Playlist: ${d}`);
-                    
+                    }
                     
                     // Reset playlist data when changing playlists
                     currentlySelectedSongs = [currentPlaylist.songs[0], currentPlaylist.songs[1]];
@@ -87,7 +91,7 @@ function main() {
         $('[data-toggle="tooltip"]').tooltip()
     });
     // Structure json data 
-    $.getJSON("playlists_data.json", (json) => {
+    $.getJSON("../backend/playlists_data.json", (json) => {
         var playlists = json;
 
         // Create dropdown menu
