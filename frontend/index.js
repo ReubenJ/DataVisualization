@@ -77,9 +77,15 @@ function createDropdownMenu(playlists) {
 
                     buildForceGraph(currentPlaylist);
                 });
+
+    d3.select("#dropdownMenuButton1")
+        .text(`Selected Playlist: ${playlists.map(getName)[0]}`);
 }
 
 function main() {
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
     // Structure json data 
     $.getJSON("../backend/playlists_data.json", (json) => {
         var playlists = json;
