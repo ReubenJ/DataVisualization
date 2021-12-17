@@ -78,8 +78,8 @@ export function topGenreTable(genredata, data) {
         .attr("id", d => d.genre);
 
     tbody.selectAll("tr").on("click", function(e, d) {
-        tbody.selectAll("tr").attr("style", null);
-        d3.select(this).attr("style", "background-color: #1DB954");
+        tbody.selectAll("tr").selectAll("td").attr("style", "background-color: unset");
+        d3.select(this).selectAll("td").attr("style", "background-color: #1DB954");
 
         // Highlight artist node based on selected genre
         let node = d3.select("#nodeGroup").selectAll("*");
@@ -97,7 +97,7 @@ export function topGenreTable(genredata, data) {
             .attr("fill-opacity", "100%")
             .attr("fill", "#1DB954")
             .transition()
-                .attr("r", "8");
+                .attr("r", "10");
         
         // Highlight songs based on selected genre
         let genreSongs = [];
@@ -112,6 +112,7 @@ export function topGenreTable(genredata, data) {
                 }
             }
         }
+        console.log(genreSongs);   
 
         let song_table = d3.select("#songtable").select("table");
         let song_tbody = song_table.select("tbody");
@@ -119,10 +120,11 @@ export function topGenreTable(genredata, data) {
 
         // Deselect songs from the previously selected genre
         song_rows
-            .attr("style", "background-color: revert; color: #fff");
+            .attr("style", "background-color: none; color: #fff");
 
         // Select songs from the genre clicked on
         for (const song in genreSongs){
+            console.log(song);
             song_rows.filter(function(){
                 return d3.select(this).text() == genreSongs[song]
             })
@@ -130,15 +132,16 @@ export function topGenreTable(genredata, data) {
         }
         
         d3.select("#resetGenre")
-            .on("click.table", function() {
-                d3.selectAll("[id^=genreRow-]")
-                    .attr("style", "opacity: 100%;")
-                    .filter(d => d !== undefined)
-                    .sort((a, b) => d3.ascending(a.ranking, b.ranking))
-                    .selectAll("td")
-                    .attr("style", "background-color: revert; color: #fff");
-                song_rows
-                    .attr("style", "background-color: revert; color: #fff");
+        .on("click", function() {
+            // d3.selectAll("")
+            d3.selectAll("[id^=genreRow-]")
+                .attr("style", "opacity: 100%;")
+                .filter(d => d !== undefined)
+                .sort((a, b) => d3.ascending(a.ranking, b.ranking))
+                .selectAll("td")
+                .attr("style", "background-color: none; color: #fff");
+            song_rows
+                .attr("style", "background-color: none; color: #fff");
         });
 
     });
@@ -147,6 +150,9 @@ export function topGenreTable(genredata, data) {
 
 // Update table
 export function updateSongTable(currentlySelectedSongs, data) {
+    // console.log("current playlist is: ");
+    // console.log(data);
+
     let songdata = [];
     let sortAscending = true;
     currentPlaylist = data;
@@ -207,10 +213,13 @@ export function updateSongTable(currentlySelectedSongs, data) {
 
     // Make rows clickable for usage in radarchart
     rowsEnter.on("click", (d) => {
+        console.log(currentPlaylist);
         let clickedSong = d.originalTarget.__data__.track;
         // Handles connection with the radar chart
         for (let song in currentPlaylist.songs) {
+            //console.log(data.songs[song].song_name);
             if (currentPlaylist.songs[song].song_name == clickedSong) {
+                console.log("true");
                 if (pushBack) {
                     // arr[0] = new song
                     currentlySelectedSongs[0] = currentPlaylist.songs[song];
