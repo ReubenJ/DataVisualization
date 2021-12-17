@@ -221,9 +221,9 @@ export function updateSongTable(currentlySelectedSongs, data) {
 
 
     // Make rows clickable for usage in radarchart
-    rowsEnter.on("click", (d) => {
-        console.log(currentPlaylist);
-        let clickedSong = d.originalTarget.__data__.track;
+    rowsEnter.on("click", (e, d) => {
+        console.log(d);
+        let clickedSong = d.track;
         // Handles connection with the radar chart
         for (let song in currentPlaylist.songs) {
             //console.log(data.songs[song].song_name);
