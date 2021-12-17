@@ -48,34 +48,6 @@
   cursor: pointer;
 }
 
-
-
-/* .infocard-header {
-  padding: 10px;
-  border-radius: 5px 5px 0 0;
-  height: 30px;
-  background: linear-gradient(
-      rgba(0, 0, 0, 0.1), 
-      rgba(0, 0, 0, 0.1)
-    );
-}
-
-.infocard-body {
-  display: grid;
-  padding: 15px;
-  padding-bottom: 0px;
-  height: 210px;
-  margin-bottom: 20px;
-} */
-
-/* #songtable tbody tr:nth-child(even) {
-  background: green;
-}
-
-#songtable tbody tr:nth-child(odd) {
-  background: darkslategray
-} */
-
 #firstRow {
   margin-bottom: 0.5rem;
 }
@@ -98,4 +70,9 @@
 
 #songname2 {
   color: red;
+}
+
+#resetZoom {
+  margin-top: 1rem;
+  margin-left: 0.5rem;
 }
