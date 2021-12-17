@@ -23,8 +23,8 @@ function ForceGraph({
   nodeRadius = "25", // node radius, in pixels
   expandedRadius = (4 * parseFloat(nodeRadius)).toString(),
   nodeStrength = "-30",
-  linkSource = ({source}) => source, // given d in links, returns a node identifier string
-  linkTarget = ({target}) => target, // given d in links, returns a node identifier string
+  linkSource = ({ source }) => source, // given d in links, returns a node identifier string
+  linkTarget = ({ target }) => target, // given d in links, returns a node identifier string
   linkStroke = "#999", // link stroke color
   linkStrokeOpacity = 0.4, // link stroke opacity
   linkStrokeWidth, // given d in links, returns a stroke width in pixels
@@ -46,8 +46,8 @@ function ForceGraph({
   const I = d3.map(nodes, nodeImage);
 
   // Replace the input nodes and links with mutable objects for the simulation.
-  nodes = d3.map(nodes, (_, i) => ({id: N[i], genres: G[i]}));
-  links = d3.map(links, (_, i) => ({source: LS[i], target: LT[i]}));
+  nodes = d3.map(nodes, (_, i) => ({ id: N[i], genres: G[i] }));
+  links = d3.map(links, (_, i) => ({ source: LS[i], target: LT[i] }));
 
   // Compute default domains.
   if (G && nodeGroups === undefined) nodeGroups = d3.sort(G);
@@ -57,132 +57,132 @@ function ForceGraph({
 
   // Construct the forces.
   const forceNode = d3.forceManyBody().distanceMax("150");
-  const forceLink = d3.forceLink(links).id(({index: i}) => N[i]);
+  const forceLink = d3.forceLink(links).id(({ index: i }) => N[i]);
   if (nodeStrength !== undefined) forceNode.strength(nodeStrength);
   if (linkStrength !== undefined) forceLink.strength(linkStrength);
 
   const simulation = d3.forceSimulation(nodes)
-      .force("link", forceLink)
-      .force("charge", forceNode)
-      .force("center",  d3.forceCenter())
-      .on("tick", ticked);
+    .force("link", forceLink)
+    .force("charge", forceNode)
+    .force("center", d3.forceCenter())
+    .on("tick", ticked);
 
   const svg = d3.create("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("viewBox", [-width / 2, -height / 2, width, height])
-      .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+    .attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", [-width / 2, -height / 2, width, height])
+    .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
   const contents = svg.append("g")
     .attr("id", "forceContents");
 
   const link = contents.append("g")
-      .attr("stroke", linkStroke)
-      .attr("stroke-opacity", linkStrokeOpacity)
-      .attr("stroke-width", "0.25") //typeof linkStrokeWidth !== "function" ? linkStrokeWidth : null)
-      .attr("stroke-linecap", linkStrokeLinecap)
+    .attr("stroke", linkStroke)
+    .attr("stroke-opacity", linkStrokeOpacity)
+    .attr("stroke-width", "0.25") //typeof linkStrokeWidth !== "function" ? linkStrokeWidth : null)
+    .attr("stroke-linecap", linkStrokeLinecap)
     .selectAll("line")
     .data(links)
     .join("line");
 
   svg.call(d3.zoom()
     .scaleExtent([1, 10])
-    .translateExtent([[-width/2, -height/2], [width/2, height/2]])
-    .on("zoom", function(e) {
-        contents.attr("transform", e.transform);
-      }
+    .translateExtent([[-width / 2, -height / 2], [width / 2, height / 2]])
+    .on("zoom", function (e) {
+      contents.attr("transform", e.transform);
+    }
     )
   );
 
   const node = contents.append("g")
-      .attr("fill", nodeFill)
-      .attr("stroke", nodeStroke)
-      .attr("fill-opacity", "50%")
-      .attr("stroke-opacity", nodeStrokeOpacity)
-      .attr("stroke-width", nodeStrokeWidth)
-      .attr("id", "nodeGroup")
+    .attr("fill", nodeFill)
+    .attr("stroke", nodeStroke)
+    .attr("fill-opacity", "50%")
+    .attr("stroke-opacity", nodeStrokeOpacity)
+    .attr("stroke-width", nodeStrokeWidth)
+    .attr("id", "nodeGroup")
     .selectAll("circle")
     .data(nodes)
     .join("g")
-      .attr("r", nodeRadius)
-      .call(drag(simulation));
+    .attr("r", nodeRadius)
+    .call(drag(simulation));
 
   var selected = d3.select(null);
 
   // Add circular clip path to mask image
   node.append("clipPath")
-    .attr("id", function(d, i) {return `circularClip-${i}`;})
+    .attr("id", function (d, i) { return `circularClip-${i}`; })
     .append("circle")
     .attr("r", nodeRadius);
 
   node.append("circle")
     .attr("r", nodeRadius);
-  
+
   // Add image tag
   node.append("image")
-    .attr("href", function(d, i) {return I[i]})
+    .attr("href", function (d, i) { return I[i] })
     .attr("height", "50")
     .attr("width", "50")
     .attr("style", "opacity: 0%;")
     // This contrains the image to the circle
-    .attr("clip-path", function(d, i) {return `url(#circularClip-${i})`});
+    .attr("clip-path", function (d, i) { return `url(#circularClip-${i})` });
 
   node
-    .on('mouseover', function(e, d) {
+    .on('mouseover', function (e, d) {
       let mousedOverSel = selected.filter(dSel => dSel.id === d.id)
       mousedOverSel.select("image")
         // .transition()
-          .attr("style", "opacity: 100%");
+        .attr("style", "opacity: 100%");
       mousedOverSel.selectAll("circle")
         .transition()
-          .attr("r", expandedRadius)
-          .attr("fill-opacity", "100%");
+        .attr("r", expandedRadius)
+        .attr("fill-opacity", "100%");
     })
-    .on("mouseout", function(e, d) {
+    .on("mouseout", function (e, d) {
       let mouseOutSel = selected.filter(dSel => dSel.id === d.id);
       mouseOutSel.select("image")
         .transition()
-          .attr("style", "opacity: 50%");
+        .attr("style", "opacity: 50%");
       mouseOutSel.selectAll("circle")
         .transition()
-          .attr("r", "10")
-          .attr("fill-opacity", "50%");
+        .attr("r", "10")
+        .attr("fill-opacity", "50%");
     })
-    .on("click", function(e, d) {
-        resetNodeSelectionStyles();
-        
-        // Clear selection for genre table as well
-        selected.each(function(d) {
-          for (let g in G[d.id]) {
-            let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
-            d3.select(id)
-              .selectAll("td")
-              .attr("style", "background-color: unset; color: #fff");
-          };
-          d3.select("#genretable").selectAll("tr").filter(d => d !== undefined)
-            .sort((a, b) => d3.ascending(a.ranking, b.ranking));
-        });
+    .on("click", function (e, d) {
+      resetSelectionStyles();
 
-        // Update new selection styles
-        d3.select(this).selectAll("circle")
-          .transition()
-            .attr("opacity", "100%")
-            .attr("r", expandedRadius);
+      // Clear selection for genre table as well
+      selected.each(function (d) {
+        for (let g in G[d.id]) {
+          let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
+          d3.select(id)
+            .selectAll("td")
+            .attr("style", "background-color: unset; color: #fff");
+        };
+        d3.select("#genretable").selectAll("tr").filter(d => d !== undefined)
+          .sort((a, b) => d3.ascending(a.ranking, b.ranking));
+      });
 
-        d3.select(this).select("image")
-          .transition()
-          .attr("style", "opacity: 100%");
+      // Update new selection styles
+      d3.select(this).selectAll("circle")
+        .transition()
+        .attr("opacity", "100%")
+        .attr("r", expandedRadius);
 
-        d3.select(this)
-          .attr("selected", true)
-          .raise();
+      d3.select(this).select("image")
+        .transition()
+        .attr("style", "opacity: 100%");
 
-        selected = d3.select(this);
-        
-        // update genre table
-        selected.each(function(d) {
-          if (G[d.id].length > 0) {
-            link
+      d3.select(this)
+        .attr("selected", true)
+        .raise();
+
+      selected = d3.select(this);
+
+      // update genre table
+      selected.each(function (d) {
+        if (G[d.id].length > 0) {
+          link
             .filter(dLink => dLink.target.id === d.id || dLink.source.id === d.id)
             .attr("stroke-width", "0.75")
             .attr("stroke", "#fff")
@@ -197,53 +197,60 @@ function ForceGraph({
               .attr("style", "opacity: 100%;")
               .selectAll("td")
               .attr("style", "background-color: #fff; color: #000;");
-            }
           }
-        })
-        
-        e.stopPropagation();
-      }
+        } else {
+          d3.selectAll("[id^=genreRow]")
+            .attr("style", "opacity: 100%;")
+            .filter(d => d !== undefined)
+            .sort((a, b) => d3.ascending(a.ranking, b.ranking))
+            .selectAll("td")
+            .attr("style", null);
+        }
+      })
+
+      e.stopPropagation();
+    }
     );
 
   svg
-    .on('click', function() {
+    .on('click', function () {
       selected
         .select("image")
         .transition()
-          .attr("style", "opacity: 0%;");
+        .attr("style", "opacity: 0%;");
       node
         .selectAll("circle")
         .transition()
-          .attr("fill-opacity", "50%")
-          .attr("fill", nodeFill)
-          .attr("r", nodeRadius);
+        .attr("fill-opacity", "50%")
+        .attr("fill", nodeFill)
+        .attr("r", nodeRadius);
 
       // Clear selection for genre table as well
       d3.selectAll("[id^=genreRow]")
-          .attr("style", "opacity: 100%;")
-          .filter(d => d !== undefined)
-          .sort((a, b) => d3.ascending(a.ranking, b.ranking))
-          .selectAll("td")
-            .attr("style", null);
+        .attr("style", "opacity: 100%;")
+        .filter(d => d !== undefined)
+        .sort((a, b) => d3.ascending(a.ranking, b.ranking))
+        .selectAll("td")
+        .attr("style", null);
 
       link
         .attr("stroke-width", "0.25")
         .attr("stroke", "#aaa")
         .attr("stroke-opacity", "0.4")
         .sort();
-      
+
       selected.attr("selected", null);
 
       selected = d3.select(null);
     }
-  );
+    );
 
   d3.select("#resetGenre")
-    .on("click.force", resetNodeSelectionStyles);
+    .on("click.force", resetSelectionStyles);
 
   // if (W) link.attr("stroke-width", ({index: i}) => W[i]);
-  if (G) node.attr("fill", ({index: i}) => nodeFill); //color(G[i][0]));
-  if (T) node.append("title").text(({index: i}) => T[i]);
+  if (G) node.attr("fill", ({ index: i }) => nodeFill); //color(G[i][0]));
+  if (T) node.append("title").text(({ index: i }) => T[i]);
   if (invalidation != null) invalidation.then(() => simulation.stop());
 
   function intern(value) {
@@ -255,68 +262,71 @@ function ForceGraph({
     link
       .attr("x1", d => (Math.max(parsedRadius, Math.min(width - parsedRadius, d.source.x + (width / 2))) - (width / 2)).toString())
       .attr("y1", d => (Math.max(parsedRadius, Math.min(height - parsedRadius, d.source.y + (height / 2))) - (height / 2)).toString())
-      .attr("x2", d => (Math.max(parsedRadius, Math.min(width - parsedRadius,  d.target.x + (width / 2))) - (width / 2)).toString())
+      .attr("x2", d => (Math.max(parsedRadius, Math.min(width - parsedRadius, d.target.x + (width / 2))) - (width / 2)).toString())
       .attr("y2", d => (Math.max(parsedRadius, Math.min(height - parsedRadius, d.target.y + (height / 2))) - (height / 2)).toString());
     node
       .select("image")
       .attr("x", d => (Math.max(parsedRadius, Math.min(width - parsedRadius, d.x + (width / 2))) - 25 - (width / 2)).toString())
       .attr("y", d => (Math.max(parsedRadius, Math.min(height - parsedRadius, d.y + (height / 2))) - 25 - (height / 2)).toString());
-    
+
     node
       .selectAll("circle")
       .attr("cx", d => (Math.max(parsedRadius, Math.min(width - parsedRadius, d.x + (width / 2))) - (width / 2)).toString())
       .attr("cy", d => (Math.max(parsedRadius, Math.min(height - parsedRadius, d.y + (height / 2))) - (height / 2)).toString());
-    
+
   }
 
-  function drag(simulation) {    
+  function drag(simulation) {
     function dragstarted(event) {
       if (!event.active) simulation.alphaTarget(0.3).restart();
       event.subject.fx = event.subject.x;
       event.subject.fy = event.subject.y;
     }
-    
+
     function dragged(event) {
       event.subject.fx = event.x;
       event.subject.fy = event.y;
     }
-    
+
     function dragended(event) {
       if (!event.active) simulation.alphaTarget(0);
       event.subject.fx = null;
       event.subject.fy = null;
     }
-    
+
     return d3.drag()
       .on("start", dragstarted)
       .on("drag", dragged)
       .on("end", dragended);
   }
 
-  function resetNodeSelectionStyles() {
+  function resetSelectionStyles() {
     // Clear old selection styles
     selected.select("image")
       .transition()
-        .attr("style", "opacity: 0%;");
+      .attr("style", "opacity: 0%;");
     selected.selectAll("circle")
       .transition()
-        .attr("fill-opacity", "50%")
-        .attr("fill", nodeFill)
-        .attr("r", nodeRadius);
+      .attr("fill-opacity", "50%")
+      .attr("fill", nodeFill)
+      .attr("r", nodeRadius);
     selected.attr("selected", null);
-      node.selectAll("circle")
-        .attr("fill", nodeFill)
-        .attr("fill-opacity", "50%")
-        .attr("r", nodeRadius);
+    node.selectAll("circle")
+      .attr("fill", nodeFill)
+      .attr("fill-opacity", "50%")
+      .attr("r", nodeRadius);
 
     link
       .attr("stroke-width", "0.25")
       .attr("stroke", "#aaa")
       .attr("stroke-opacity", "0.4")
       .sort();
+
+    d3.select("#songtable").select("table").select("tbody").selectAll("tr")
+      .attr("style", "background-color: revert; color: #fff");
   }
 
-  return Object.assign(svg.node(), {scales: {color}});
+  return Object.assign(svg.node(), { scales: { color } });
 };
 
 function artists(currentPlaylist) {
@@ -328,7 +338,7 @@ function artists(currentPlaylist) {
       url: song.artists.image[0].url,
     }))
     // Remove duplicate artists
-    .filter((item, index) => 
+    .filter((item, index) =>
       currentPlaylist.songs
         .map(song => song.artists.name).indexOf(item.name) === index
     )
@@ -337,13 +347,13 @@ function artists(currentPlaylist) {
       name: artist.name,
       group: artist.group,
       url: artist.url
-    })); 
-    return res;
+    }));
+  return res;
 }
 
 function connections(artists) {
   let res = artists
-    .map(artist => 
+    .map(artist =>
       artists
         .filter(otherArtist => artist !== otherArtist)
         .map(otherArtist => ({
@@ -352,7 +362,7 @@ function connections(artists) {
           // how many genres overlap
           strength: (new Set([...artist.group].filter(x => otherArtist.group.includes(x)))).size
         }))
-        )
+    )
     .flat()
     .filter(connection => connection.strength > 0);
   return res;
@@ -368,13 +378,13 @@ export function buildForceGraph(currentPlaylist) {
   };
 
   var chart = ForceGraph(data, {
-      nodeId: d => d.id,
-      nodeGroup: d => d.group,
-      nodeTitle: d => `Artist: ${d.name}\nGenres: ${d.group.join(", ")}`,
-      linkStrokeWidth: l => 0.001 * Math.sqrt(l.value),
-      nodeRadius: "6",
-      width: window.innerWidth.toString(),
-      height: (0.7 * window.innerHeight).toString()
+    nodeId: d => d.id,
+    nodeGroup: d => d.group,
+    nodeTitle: d => `Artist: ${d.name}\nGenres: ${d.group.join(", ")}`,
+    linkStrokeWidth: l => 0.001 * Math.sqrt(l.value),
+    nodeRadius: "6",
+    width: window.innerWidth.toString(),
+    height: (0.7 * window.innerHeight).toString()
   });
 
   d3.select("#force").node().appendChild(chart);
