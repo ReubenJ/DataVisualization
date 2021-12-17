@@ -97,7 +97,7 @@ export function topGenreTable(genredata, data) {
             .attr("fill-opacity", "100%")
             .attr("fill", "#1DB954")
             .transition()
-                .attr("r", "10");
+                .attr("r", "8");
         
         // Highlight songs based on selected genre
         let genreSongs = [];
