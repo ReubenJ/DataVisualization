@@ -32,8 +32,9 @@ export function getTopGenresRanking(data){
         }
     }
 
+    console.log(genreFrequency);
     var result = Object.keys(genreFrequency).sort(function(a, b) {
-        return genreFrequency - genreFrequency[a];
+        return genreFrequency[b] - genreFrequency[a];
       })
     let genreRanking = [];
     for (const genre in result){
@@ -43,6 +44,7 @@ export function getTopGenresRanking(data){
             "ranking": rank
         });
     }
+    
     return genreRanking;
 }
 
@@ -78,8 +80,8 @@ export function topGenreTable(genredata, data) {
         .attr("id", d => d.genre);
 
     tbody.selectAll("tr").on("click", function(e, d) {
-        tbody.selectAll("tr").selectAll("td").attr("style", "background-color: unset");
-        d3.select(this).selectAll("td").attr("style", "background-color: #1DB954");
+        tbody.selectAll("tr").attr("style", "background-color: unset");
+        d3.select(this).attr("style", "background-color: #1DB954");
 
         // Highlight artist node based on selected genre
         let node = d3.select("#nodeGroup").selectAll("*");
