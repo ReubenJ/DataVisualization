@@ -9,7 +9,6 @@
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="radar-chart.css">
         <link rel="icon" href="favicon.ico">
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script src="https://d3js.org/d3.v3.min.js"></script>
         <title>Spotify Data Visualization</title>
     </head>
@@ -21,9 +20,6 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              
-            </div>
           </div>
         </nav>
 
@@ -45,7 +41,7 @@
               </div>
               <div style="margin-top: 0.25rem; text-align: right;">
                 <a href="#" data-toggle="tooltip" data-placement="bottom" toggle="click hover focus"
-                title="For the purpose of delivering a statically-viewable product, the Spotify data here is fixed (provided by our group member, Haoran)."
+                title="For the purpose of delivering a statically-viewable product, the Spotify data here is fixed (provided by our group members, Haoran and Sneha)."
                 >
                 <small>Can I add my own?</small></a>
               </div>
@@ -62,6 +58,9 @@
             <div class="col">
               <button id="resetGenre" style="background-color:#1DB954; border-color: #1DB954; margin-top: 1rem;" class="btn btn-success">
                 <small>Reset Selections</small>
+              </button>
+              <button id="resetZoom" style="color: #1DB954; border-color: #1DB954; margin-top: 1rem; margin-left: 0.5rem;" class="btn btn-outline-success">
+                <small>Reset Zoom</small>
               </button>
             </div>
           </div>
@@ -94,45 +93,6 @@
         </div>
       </section>
       
-
-    <!-- <section class="bg-dark text-light p-5 text-center">
-      <div class="container">
-        <div class="d-flex">
-          <div>
-            <h4 id="genreTableTitle">Genre Table</h4>
-            <div id="genretable" class="musictables">
-            </div>
-          </div>
-          <div style="padding: 50px;">
-            Provides some space ebtween the two tables
-          </div>
-          <div>
-            <h4 id="songTableTitle">Song Table</h4>
-            <div id="songtable" class="musictables">
-            </div>
-          </div>
-        </div>
-      </div>
-    </section> -->
-
-    <!-- <section class="bg-dark text-light p-5 text-center">
-      <div class="container">
-        <div class="d-flex">
-          <div>
-            <div class="infocard">
-              Radar Chart
-              Single Song Stats
-              <div class="inforcard-header"></div>
-              <div class="infocard-body"> 
-                <div id="songname1">song1</div>
-                <div id="songname2">song2</div>
-                <div id="radarChart"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section> -->
       <script src="http://code.jquery.com/jquery.min.js"></script>
       <script src="index.js" type="module"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

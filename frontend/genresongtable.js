@@ -141,7 +141,6 @@ export function topGenreTable(genredata, data) {
             .lower();
         }
         document.getElementById('id').scrollIntoView();
-
     });
 
     d3.select("#resetGenre")

@@ -47,7 +47,13 @@ function createDropdownMenu(playlists) {
             .append("a")
                 .attr("class", "dropdown-item")
                 .attr("href", "#")
-                .text(d => d)
+                .text(d => {
+                    if (d.length > 25) {
+                        return `${d.slice(0, 25)}...`;
+                    } else {
+                        return d;
+                    }
+                })
                 .on("click", function(e, d) {
                     currentPlaylist = playlists[playlists.map(getName).indexOf(d)];
                     if (d.length > 20) {

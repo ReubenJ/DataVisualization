@@ -85,14 +85,20 @@ function ForceGraph({
     .data(links)
     .join("line");
 
-  svg.call(d3.zoom()
-    .scaleExtent([1, 10])
-    .translateExtent([[-width / 2, -height / 2], [width / 2, height / 2]])
-    .on("zoom", function (e) {
-      contents.attr("transform", e.transform);
-    }
-    )
-  );
+  const zoom = d3.zoom()
+  .scaleExtent([1, 10])
+  .translateExtent([[-width / 2, -height / 2], [width / 2, height / 2]])
+  .on("zoom", function (e) {
+    contents.attr("transform", e.transform);
+  });
+
+  svg.call(zoom);
+
+  d3.select("#resetZoom")
+    .on("click", function() {
+      d3.select("#forceContents")
+        .call(zoom.translateTo, 0, 0);
+    });
 
   const node = contents.append("g")
     .attr("fill", nodeFill)
