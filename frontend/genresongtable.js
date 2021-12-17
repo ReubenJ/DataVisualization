@@ -122,7 +122,8 @@ export function topGenreTable(genredata, data) {
 
         // Deselect songs from the previously selected genre
         song_rows
-            .attr("style", "background-color: none; color: #fff");
+            .attr("style", "background-color: none; color: #fff")
+            .raise();
 
         // Select songs from the genre clicked on
         for (const song in genreSongs){
@@ -130,7 +131,8 @@ export function topGenreTable(genredata, data) {
             song_rows.filter(function(){
                 return d3.select(this).text() == genreSongs[song]
             })
-            .attr("style", "background-color: #fff; color: #000;");
+            .attr("style", "background-color: #fff; color: #000;")
+            .lower();
         }
         
         d3.select("#resetGenre")
