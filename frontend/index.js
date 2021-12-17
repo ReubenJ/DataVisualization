@@ -29,8 +29,6 @@ function extractStatistics(songs) {
 
 export function drawRadarChart(selectedSongs) {
     // TODO: Display some basic info of the selected songs
-    console.log("current songs: ");
-    console.log(selectedSongs);
 
     var songsStats = extractStatistics(selectedSongs);
     
@@ -38,14 +36,6 @@ export function drawRadarChart(selectedSongs) {
     document.getElementById("songname2").innerHTML = selectedSongs[1].song_name;
     createRadarChart(songsStats);
 }
-
-// function getPlaylist(playlists, playlistName){
-//     for(var i = 0; i < playlists.length; i++){
-//         if (playlists[i]['name'] == playlistName) {
-//             return playlists[i];
-//         }
-//     }
-// }
 
 function createDropdownMenu(playlists) {
     // Add playlist names in the dropdown menu
@@ -91,7 +81,7 @@ function main() {
         $('[data-toggle="tooltip"]').tooltip()
     });
     // Structure json data 
-    $.getJSON("../backend/playlists_data.json", (json) => {
+    $.getJSON("playlists_data.json", (json) => {
         var playlists = json;
 
         // Create dropdown menu

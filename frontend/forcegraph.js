@@ -89,7 +89,6 @@ function ForceGraph({
     .scaleExtent([1, 10])
     .translateExtent([[-width/2, -height/2], [width/2, height/2]])
     .on("zoom", function(e) {
-        console.log(e.transform);
         contents.attr("transform", e.transform);
       }
     )
@@ -135,7 +134,8 @@ function ForceGraph({
         // .transition()
           .attr("style", "opacity: 100%");
       mousedOverSel.selectAll("circle")
-        // .transition()
+        .transition()
+          .attr("r", expandedRadius)
           .attr("fill-opacity", "100%");
     })
     .on("mouseout", function(e, d) {
@@ -149,27 +149,10 @@ function ForceGraph({
           .attr("fill-opacity", "50%");
     })
     .on("click", function(e, d) {
-        // Clear old selection styles
-        selected.select("image")
-          .transition()
-            .attr("style", "opacity: 0%;");
-        selected.selectAll("circle")
-          .transition()
-            .attr("fill-opacity", "50%")
-            .attr("fill", nodeFill)
-            .attr("r", nodeRadius);
-        selected.attr("selected", null);
-        node.selectAll("circle")
-          .attr("fill", nodeFill)
-          .attr("fill-opacity", "50%")
-          .attr("r", nodeRadius);
-        d3.select("#genretable").selectAll("tr")
-          .attr("style", "background-color: unset");
-
+        resetNodeSelectionStyles();
         
         // Clear selection for genre table as well
         selected.each(function(d) {
-          console.log(G[d.id]);
           for (let g in G[d.id]) {
             let id = `#genreRow-${G[d.id][g].replace(" ", "-").replace("&", "")}`
             d3.select(id)
@@ -198,7 +181,8 @@ function ForceGraph({
         
         // update genre table
         selected.each(function(d) {
-          link
+          if (G[d.id].length > 0) {
+            link
             .filter(dLink => dLink.target.id === d.id || dLink.source.id === d.id)
             .attr("stroke-width", "0.75")
             .attr("stroke", "#fff")
@@ -213,6 +197,7 @@ function ForceGraph({
               .attr("style", "opacity: 100%;")
               .selectAll("td")
               .attr("style", "background-color: #fff; color: #000;");
+            }
           }
         })
         
@@ -239,7 +224,7 @@ function ForceGraph({
           .filter(d => d !== undefined)
           .sort((a, b) => d3.ascending(a.ranking, b.ranking))
           .selectAll("td")
-            .attr("style", "background-color: none; color: #fff");
+            .attr("style", null);
 
       link
         .attr("stroke-width", "0.25")
@@ -252,6 +237,9 @@ function ForceGraph({
       selected = d3.select(null);
     }
   );
+
+  d3.select("#resetGenre")
+    .on("click.force", resetNodeSelectionStyles);
 
   // if (W) link.attr("stroke-width", ({index: i}) => W[i]);
   if (G) node.attr("fill", ({index: i}) => nodeFill); //color(G[i][0]));
@@ -303,6 +291,29 @@ function ForceGraph({
       .on("start", dragstarted)
       .on("drag", dragged)
       .on("end", dragended);
+  }
+
+  function resetNodeSelectionStyles() {
+    // Clear old selection styles
+    selected.select("image")
+      .transition()
+        .attr("style", "opacity: 0%;");
+    selected.selectAll("circle")
+      .transition()
+        .attr("fill-opacity", "50%")
+        .attr("fill", nodeFill)
+        .attr("r", nodeRadius);
+    selected.attr("selected", null);
+      node.selectAll("circle")
+        .attr("fill", nodeFill)
+        .attr("fill-opacity", "50%")
+        .attr("r", nodeRadius);
+
+    link
+      .attr("stroke-width", "0.25")
+      .attr("stroke", "#aaa")
+      .attr("stroke-opacity", "0.4")
+      .sort();
   }
 
   return Object.assign(svg.node(), {scales: {color}});
@@ -367,7 +378,4 @@ export function buildForceGraph(currentPlaylist) {
   });
 
   d3.select("#force").node().appendChild(chart);
-  // console.log(json[0]["songs"][0]["artists"]);
 }
-
-// console.log(artists());
