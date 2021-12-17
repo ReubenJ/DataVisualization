@@ -140,6 +140,8 @@ export function topGenreTable(genredata, data) {
                 .sort((a, b) => d3.ascending(a.ranking, b.ranking))
                 .selectAll("td")
                 .attr("style", "background-color: none; color: #fff");
+            song_rows
+                .attr("style", "background-color: none; color: #fff");
         });
 
     });
