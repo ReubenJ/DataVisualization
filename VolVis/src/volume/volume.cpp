@@ -87,7 +87,7 @@ float Volume::getSampleInterpolate(const glm::vec3& coord) const
     case InterpolationMode::NearestNeighbour: {
         return getSampleNearestNeighbourInterpolation(coord);
     }
-    case InterpolationMode::Linear: {
+    case InterpolationMode::Linear: {       
         return getSampleTriLinearInterpolation(coord);
     }
     case InterpolationMode::Cubic: {
@@ -121,7 +121,22 @@ float Volume::getSampleNearestNeighbourInterpolation(const glm::vec3& coord) con
 // This function returns the trilinear interpolated value at the continuous 3D position given by coord.
 float Volume::getSampleTriLinearInterpolation(const glm::vec3& coord) const
 {
-    return 0.0f;
+    // check if the coordinate is within volume boundaries
+    if (glm::any(glm::lessThan(coord, glm::vec3(0))) || glm::any(glm::greaterThanEqual(coord, glm::vec3(m_dim))))
+        return 0.0f;
+
+    // Get two points to bilinearly interpolate
+    int low_z = static_cast<int>(glm::floor(coord.z));
+    int high_z = static_cast<int>(glm::ceil(coord.z));
+
+    glm::vec2 xyCoord{coord.x, coord.y};
+    float low_zInterpolation = biLinearInterpolate(xyCoord, low_z);
+    float high_zInterpolation = biLinearInterpolate(xyCoord, high_z);
+
+    // lin interpolate between two results
+    float result = linearInterpolate(low_zInterpolation, high_zInterpolation, coord.z - low_z);
+
+    return result;
 }
 
 // This function linearly interpolates the value at X using incoming values g0 and g1 given a factor (equal to the positon of x in 1D)
@@ -130,13 +145,30 @@ float Volume::getSampleTriLinearInterpolation(const glm::vec3& coord) const
 //   factor
 float Volume::linearInterpolate(float g0, float g1, float factor)
 {
-    return 0.0f;
+    return g0 + ((g1-g0) * factor);
 }
 
 // This function bi-linearly interpolates the value at the given continuous 2D XY coordinate for a fixed integer z coordinate.
 float Volume::biLinearInterpolate(const glm::vec2& xyCoord, int z) const
 {
-    return 0.0f;
+    int tx = static_cast<int>(glm::ceil(xyCoord.x));
+    int ty = static_cast<int>(glm::ceil(xyCoord.y));
+    int bx = static_cast<int>(glm::floor(xyCoord.x));
+    int by = static_cast<int>(glm::floor(xyCoord.y));
+
+    float tx_ty = getVoxel(tx, ty, z);
+    float tx_by = getVoxel(tx, by, z);
+    float bx_ty = getVoxel(bx, ty, z);
+    float bx_by = getVoxel(bx, by, z);
+
+    // Between tx_ty and bx_ty
+    float topPoint = linearInterpolate(tx_ty, bx_ty, xyCoord.x - bx);
+    float botPoint = linearInterpolate(bx_by, tx_by, xyCoord.x - bx);
+
+    // Between topPoint botPoint
+    float returnPoint = linearInterpolate(topPoint, botPoint, xyCoord.y - by);
+    
+    return returnPoint;
 }
 
 
