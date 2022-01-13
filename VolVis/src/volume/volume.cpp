@@ -162,11 +162,11 @@ float Volume::biLinearInterpolate(const glm::vec2& xyCoord, int z) const
     float bx_by = getVoxel(bx, by, z);
 
     // Between tx_ty and bx_ty
-    float topPoint = linearInterpolate(tx_ty, bx_ty, xyCoord.x - bx);
+    float topPoint = linearInterpolate(bx_ty, tx_ty, xyCoord.x - bx);
     float botPoint = linearInterpolate(bx_by, tx_by, xyCoord.x - bx);
 
     // Between topPoint botPoint
-    float returnPoint = linearInterpolate(topPoint, botPoint, xyCoord.y - by);
+    float returnPoint = linearInterpolate(botPoint, topPoint, xyCoord.y - by);
     
     return returnPoint;
 }
