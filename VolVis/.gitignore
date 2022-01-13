@@ -34,5 +34,6 @@
 # CMake build directory
 build
 
-# vs directory
+# vs (code) directory
 *.vs
+.vscode
