@@ -176,16 +176,57 @@ glm::vec4 Renderer::traceRayMIP(const Ray& ray, float sampleStep) const
 glm::vec4 Renderer::traceRayISO(const Ray& ray, float sampleStep) const
 {
     static constexpr glm::vec3 isoColor { 0.8f, 0.8f, 0.2f };
-    return glm::vec4(isoColor, 1.0f);
+
+    // Incrementing samplePos directly instead of recomputing it each frame gives a measureable speed-up.
+    glm::vec3 samplePos = ray.origin + ray.tmin * ray.direction;
+    const glm::vec3 increment = sampleStep * ray.direction;
+    for (float t = ray.tmin; t <= ray.tmax; t += sampleStep, samplePos += increment) {
+        const float val = m_pVolume->getSampleInterpolate(samplePos);
+
+        if (val > m_config.isoValue) {
+            float t0 = t - sampleStep;    // closer to eye
+            float t1 = t;                 // at hitpoint
+            float offset = bisectionAccuracy(ray, t0, t1, m_config.isoValue);
+            glm::vec3 V = m_pCamera->forward();
+            glm::vec3 L = V;
+            glm::vec3 shaded = computePhongShading(isoColor, m_pGradientVolume->getGradientInterpolate(samplePos - offset), L, V);            
+
+            // if (glm::abs(ret - m_config.isoValue) < 0.01f)       
+            return glm::vec4(shaded, 1.0f);
+            // else
+                // return glm::vec4(0);
+        }
+    }
+
+    return glm::vec4(0); // glm::vec4(glm::vec3(0), 1.0f); // might be glm::vec4(0);
 }
 
 // ======= TODO: IMPLEMENT ========
 // Given that the iso value lies somewhere between t0 and t1, find a t for which the value
 // closely matches the iso value (less than 0.01 difference). Add a limit to the number of
 // iterations such that it does not get stuck in degerate cases.
+// eye---t0---t0+offset---t1---
+//        |---isoValue--|  <- somewhere in between   
 float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoValue) const
 {
-    return 0.0f;
+    float offset = (t1 - t0) / 2;
+    float val = m_pVolume->getSampleInterpolate(ray.origin + ((t0 + offset) * ray.direction));
+    for (int i = 0; i < 100; i++) {
+        // val within acceptable thresholds
+        if (glm::abs(val - isoValue) < 0.01f) 
+           return t1 - (t0 + offset); // t0 + offset;      
+        if (val > isoValue)  // left again
+            t1 -= (t1 - t0) / 2;
+        else  // too small now, go right
+            t0 += offset;
+        offset /= 2;
+                    
+        // Resample val using updated positions
+        val = m_pVolume->getSampleInterpolate(ray.origin + ((t0 + offset) * ray.direction));
+        
+    }
+    
+    return t1 - (t0 + offset); //t0 + offset;
 }
 
 // ======= TODO: IMPLEMENT ========
@@ -197,7 +238,28 @@ float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoV
 // You are free to choose any specular power that you'd like.
 glm::vec3 Renderer::computePhongShading(const glm::vec3& color, const volume::GradientVoxel& gradient, const glm::vec3& L, const glm::vec3& V)
 {
-    return glm::vec3(0.0f);
+    // Phong weights
+    float k_a = 0.1f;
+    float k_d = 0.7f;
+    float k_s = 0.2f;
+
+    // Phong exponent
+    int alpha = 100;
+
+    glm::vec3 lightColour = glm::vec3(1);
+
+    // Ambient component
+    glm::vec3 ambientComponent = k_a * lightColour * color;
+
+    // Diffuse component
+    float cosTheta = glm::dot(glm::normalize(L), glm::normalize(gradient.dir));
+    glm::vec3 diffuseComponent = k_d * (lightColour * color) * cosTheta;
+
+    // Specular component 
+    float cosPhi = glm::dot(glm::normalize(L), glm::normalize(V));
+    glm::vec3 specularComponent = k_s * (lightColour * color) * static_cast<float>(glm::pow(cosPhi, alpha));
+
+    return ambientComponent + diffuseComponent + specularComponent;
 }
 
 // ======= TODO: IMPLEMENT ========

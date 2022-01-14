@@ -122,7 +122,7 @@ float Volume::getSampleNearestNeighbourInterpolation(const glm::vec3& coord) con
 float Volume::getSampleTriLinearInterpolation(const glm::vec3& coord) const
 {
     // check if the coordinate is within volume boundaries
-    if (glm::any(glm::lessThan(coord, glm::vec3(0))) || glm::any(glm::greaterThanEqual(coord, glm::vec3(m_dim))))
+    if (glm::any(glm::lessThan(coord - 1.0f, glm::vec3(0))) || glm::any(glm::greaterThanEqual(coord + 1.0f, glm::vec3(m_dim))))
         return 0.0f;
 
     // Get two points to bilinearly interpolate
