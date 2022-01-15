@@ -183,19 +183,23 @@ glm::vec4 Renderer::traceRayISO(const Ray& ray, float sampleStep) const
     for (float t = ray.tmin; t <= ray.tmax; t += sampleStep, samplePos += increment) {
         const float val = m_pVolume->getSampleInterpolate(samplePos);
 
-        if (val > m_config.isoValue) {
+        if (val >= m_config.isoValue) {
             float t0 = t - sampleStep;    // closer to eye
             float t1 = t;                 // at hitpoint
-            float offset = bisectionAccuracy(ray, t0, t1, m_config.isoValue);
+            float mid = bisectionAccuracy(ray, t0, t1, val);
             glm::vec3 V = m_pCamera->forward();
-            glm::vec3 L = V;
-            glm::vec3 shaded = computePhongShading(isoColor, m_pGradientVolume->getGradientInterpolate(samplePos - offset), L, V);            
+            glm::vec3 L = V; // Light follows camera
+            auto old_grad = m_pGradientVolume->getGradientInterpolate(samplePos);
+
+            glm::vec3 new_samplePos = (ray.origin + ray.tmin * ray.direction) + mid * ray.direction;
+            auto new_grad = m_pGradientVolume->getGradientInterpolate(new_samplePos);
+            glm::vec3 shaded = computePhongShading(isoColor, new_grad, L, V);
 
             return glm::vec4(shaded, 1.0f);
         }
     }
 
-    return glm::vec4(0); // glm::vec4(glm::vec3(0), 1.0f); // might be glm::vec4(0);
+    return glm::vec4(0);
 }
 
 // ======= TODO: IMPLEMENT ========
@@ -204,26 +208,28 @@ glm::vec4 Renderer::traceRayISO(const Ray& ray, float sampleStep) const
 // iterations such that it does not get stuck in degerate cases.
 // eye---t0---t0+offset---t1---
 //        |---isoValue--|  <- somewhere in between   
+//                        t1 <- where we are currently
 float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoValue) const
 {
-    float offset = (t1 - t0) / 2;
-    float val = m_pVolume->getSampleInterpolate(ray.origin + ((t0 + offset) * ray.direction));
+    float mid;
     for (int i = 0; i < 100; i++) {
-        // val within acceptable thresholds
-        if (glm::abs(val - isoValue) < 0.01f) 
-           return t1 - (t0 + offset); // t0 + offset;      
-        if (val > isoValue)  // left again
-            t1 -= (t1 - t0) / 2;
-        else  // too small now, go right
-            t0 += offset;
-        offset /= 2;
-                    
-        // Resample val using updated positions
-        val = m_pVolume->getSampleInterpolate(ray.origin + ((t0 + offset) * ray.direction));
-        
+        mid = t0 + (t1 - t0) / 2;
+        isoValue = m_pVolume->getSampleInterpolate((ray.origin + ray.tmin * ray.direction) + mid * ray.direction);
+
+        // sampled value within acceptable thresholds
+        if (glm::abs(isoValue - m_config.isoValue) < 0.01f) 
+           return mid;     
+
+        // sampled value bigger so we update left border
+        if (isoValue > m_config.isoValue)
+            t0 = mid;
+
+        // sampled value smaller so we update right border
+        else  
+            t1 = mid;
     }
     
-    return t1 - (t0 + offset); //t0 + offset;
+    return mid;
 }
 
 // ======= TODO: IMPLEMENT ========
@@ -241,22 +247,25 @@ glm::vec3 Renderer::computePhongShading(const glm::vec3& color, const volume::Gr
     float k_s = 0.2f;
 
     // Phong exponent
-    int alpha = 100;
+    float alpha = 100.0f;
 
     glm::vec3 lightColour = glm::vec3(1);
 
     // Ambient component
-    glm::vec3 ambientComponent = k_a * lightColour * color;
+    glm::vec3 ambientComponent = k_a * (lightColour * color);
 
     // Diffuse component
     float cosTheta = glm::dot(glm::normalize(L), glm::normalize(gradient.dir));
     glm::vec3 diffuseComponent = k_d * (lightColour * color) * cosTheta;
 
-    // Specular component 
-    float cosPhi = glm::dot(glm::normalize(L), glm::normalize(V));
-    glm::vec3 specularComponent = k_s * (lightColour * color) * static_cast<float>(glm::pow(cosPhi, alpha));
 
-    return ambientComponent + diffuseComponent + specularComponent;
+    // Specular component
+    float theta = std::acos(cosTheta);
+    float phi = theta * 2; // only works since the light follows the camera!!
+    float cosPhi = std::cos(phi);
+    glm::vec3 specularComponent = k_s * (lightColour * color) * glm::pow(cosPhi, alpha);
+
+    return ambientComponent  + diffuseComponent + specularComponent;
 }
 
 // ======= TODO: IMPLEMENT ========
@@ -264,6 +273,7 @@ glm::vec3 Renderer::computePhongShading(const glm::vec3& color, const volume::Gr
 // Use getTFValue to compute the color for a given volume value according to the 1D transfer function.
 glm::vec4 Renderer::traceRayComposite(const Ray& ray, float sampleStep) const
 {
+    
     return glm::vec4(0.0f);
 }
 

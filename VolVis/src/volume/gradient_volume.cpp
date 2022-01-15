@@ -115,13 +115,19 @@ GradientVoxel GradientVolume::getGradientNearestNeighbor(const glm::vec3& coord)
 // Use the linearInterpolate function that you implemented below.
 GradientVoxel GradientVolume::getGradientLinearInterpolate(const glm::vec3& coord) const
 {
-    int low_x = static_cast<int>(glm::floor(coord.x));
+    if (glm::any(glm::lessThan(coord - 1.0f, glm::vec3(0))) || glm::any(glm::greaterThanEqual(coord + 1.0f, glm::vec3(m_dim))))
+        return { glm::vec3(0.0f), 0.0f };
+
+    float low_x_f = glm::floor(coord.x);
+    int low_x = static_cast<int>(low_x_f);
     int high_x = static_cast<int>(glm::ceil(coord.x));
 
-    int low_y = static_cast<int>(glm::floor(coord.y));
+    float low_y_f = glm::floor(coord.y);
+    int low_y = static_cast<int>(low_y_f);
     int high_y = static_cast<int>(glm::ceil(coord.y));
 
-    int low_z = static_cast<int>(glm::floor(coord.z));
+    float low_z_f = glm::floor(coord.z);
+    int low_z = static_cast<int>(low_z_f);
     int high_z = static_cast<int>(glm::ceil(coord.z));
 
     // front square
@@ -139,18 +145,20 @@ GradientVoxel GradientVolume::getGradientLinearInterpolate(const glm::vec3& coor
     GradientVoxel back_top_right = getGradient(high_x, high_y, high_z);
 
     // interpolations x
-    GradientVoxel grad_front_bottom = linearInterpolate(front_bottom_left, front_bottom_right, coord.x - low_x);
-    GradientVoxel grad_front_top = linearInterpolate(front_top_left, front_top_right, coord.x - low_x);
+    // front
+    GradientVoxel grad_front_bottom = linearInterpolate(front_bottom_left, front_bottom_right, coord.x - low_x_f);
+    GradientVoxel grad_front_top = linearInterpolate(front_top_left, front_top_right, coord.x - low_x_f);
 
-    GradientVoxel grad_back_bottom = linearInterpolate(back_bottom_left, back_bottom_right, coord.x- low_x);
-    GradientVoxel grad_back_top = linearInterpolate(back_top_left, back_top_right, coord.x - low_x);
+    // back
+    GradientVoxel grad_back_bottom = linearInterpolate(back_bottom_left, back_bottom_right, coord.x- low_x_f);
+    GradientVoxel grad_back_top = linearInterpolate(back_top_left, back_top_right, coord.x - low_x_f);
 
     // interpolations y
-    GradientVoxel grad_front = linearInterpolate(grad_front_bottom, grad_front_top, coord.y - low_y);
-    GradientVoxel grad_back = linearInterpolate(grad_back_bottom, grad_back_top, coord.y - low_y);
+    GradientVoxel grad_front = linearInterpolate(grad_front_bottom, grad_front_top, coord.y - low_y_f);
+    GradientVoxel grad_back = linearInterpolate(grad_back_bottom, grad_back_top, coord.y - low_y_f);
     
     // interpolation z
-    GradientVoxel grad = linearInterpolate(grad_front, grad_back, coord.z - low_z);
+    GradientVoxel grad = linearInterpolate(grad_front, grad_back, coord.z - low_z_f);
     
     return grad;
 }
@@ -160,7 +168,7 @@ GradientVoxel GradientVolume::getGradientLinearInterpolate(const glm::vec3& coor
 // At t=0, linearInterpolate should return g0 and at t=1 it returns g1.
 GradientVoxel GradientVolume::linearInterpolate(const GradientVoxel& g0, const GradientVoxel& g1, float factor)
 {
-    glm::vec3 dir = g0.dir + factor * (g1.dir - g0.dir);
+    glm::vec3 dir = ((1.0f-factor) * g0.dir) + (factor * g1.dir);
     float dist = g0.magnitude + factor * (g1.magnitude - g0.magnitude);     // probably correct?
     return GradientVoxel {dir, dist};
 }
