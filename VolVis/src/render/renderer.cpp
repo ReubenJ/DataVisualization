@@ -184,16 +184,16 @@ glm::vec4 Renderer::traceRayISO(const Ray& ray, float sampleStep) const
         const float val = m_pVolume->getSampleInterpolate(samplePos);
 
         if (val >= m_config.isoValue) {
+            if (!m_config.volumeShading)
+                return glm::vec4(isoColor, 1.0f);
             float t0 = t - sampleStep;    // closer to eye
             float t1 = t;                 // at hitpoint
             float mid = bisectionAccuracy(ray, t0, t1, val);
             glm::vec3 V = m_pCamera->forward();
             glm::vec3 L = V; // Light follows camera
-            auto old_grad = m_pGradientVolume->getGradientInterpolate(samplePos);
-
             glm::vec3 new_samplePos = ray.origin + mid * ray.direction;
-            auto new_grad = m_pGradientVolume->getGradientInterpolate(new_samplePos);
-            glm::vec3 shaded = computePhongShading(isoColor, new_grad, L, V);
+            volume::GradientVoxel grad = m_pGradientVolume->getGradientInterpolate(new_samplePos);
+            glm::vec3 shaded = computePhongShading(isoColor, grad, L, V);
 
             return glm::vec4(shaded, 1.0f);
         }
