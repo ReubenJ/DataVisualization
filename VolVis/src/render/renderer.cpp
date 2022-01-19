@@ -191,7 +191,7 @@ glm::vec4 Renderer::traceRayISO(const Ray& ray, float sampleStep) const
             glm::vec3 L = V; // Light follows camera
             auto old_grad = m_pGradientVolume->getGradientInterpolate(samplePos);
 
-            glm::vec3 new_samplePos = (ray.origin + ray.tmin * ray.direction) + mid * ray.direction;
+            glm::vec3 new_samplePos = ray.origin + mid * ray.direction;
             auto new_grad = m_pGradientVolume->getGradientInterpolate(new_samplePos);
             glm::vec3 shaded = computePhongShading(isoColor, new_grad, L, V);
 
@@ -214,7 +214,7 @@ float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoV
     float mid;
     for (int i = 0; i < 100; i++) {
         mid = t0 + (t1 - t0) / 2;
-        isoValue = m_pVolume->getSampleInterpolate((ray.origin + ray.tmin * ray.direction) + mid * ray.direction);
+        isoValue = m_pVolume->getSampleInterpolate(ray.origin + mid * ray.direction);
 
         // sampled value within acceptable thresholds
         if (glm::abs(isoValue - m_config.isoValue) < 0.01f) 
