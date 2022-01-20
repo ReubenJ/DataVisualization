@@ -241,6 +241,9 @@ float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoV
 // You are free to choose any specular power that you'd like.
 glm::vec3 Renderer::computePhongShading(const glm::vec3& color, const volume::GradientVoxel& gradient, const glm::vec3& L, const glm::vec3& V)
 {
+    if (glm::all(glm::equal(gradient.dir, glm::vec3(0))))
+        return glm::vec3(0);
+    
     // Phong weights
     float k_a = 0.1f;
     float k_d = 0.7f;
@@ -273,8 +276,34 @@ glm::vec3 Renderer::computePhongShading(const glm::vec3& color, const volume::Gr
 // Use getTFValue to compute the color for a given volume value according to the 1D transfer function.
 glm::vec4 Renderer::traceRayComposite(const Ray& ray, float sampleStep) const
 {
+    glm::vec3 samplePos = ray.origin + ray.tmin * ray.direction;
+    const glm::vec3 increment = sampleStep * ray.direction;
+
+    float A_prime_accum = 0.0f;
+    glm::vec3 C_prime_accum = glm::vec3(0);
+    glm::vec3 V = m_pCamera->position();
+    glm::vec3 L = V; // Light follows camera
     
-    return glm::vec4(0.0f);
+    for (float t = ray.tmin; t <= ray.tmax; t += sampleStep, samplePos += increment) {
+        float val = m_pVolume->getSampleInterpolate(samplePos);
+        
+        glm::vec4 tfVal = getTFValue(val);
+        glm::vec3 preMult = glm::vec3(tfVal) * tfVal.w;
+
+        volume::GradientVoxel grad = m_pGradientVolume->getGradientInterpolate(samplePos);
+        if (m_config.volumeShading)
+            preMult = computePhongShading(preMult, grad, L, V);
+        
+        C_prime_accum = C_prime_accum + (1 - A_prime_accum) * preMult;
+        A_prime_accum = A_prime_accum + (1 - A_prime_accum) * tfVal.w;
+
+        
+
+        if (std::abs(A_prime_accum - 1) < 0.01f)
+            break;
+    }
+
+    return glm::vec4(C_prime_accum, A_prime_accum);
 }
 
 // ======= DO NOT MODIFY THIS FUNCTION ========

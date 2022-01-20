@@ -168,7 +168,7 @@ GradientVoxel GradientVolume::getGradientLinearInterpolate(const glm::vec3& coor
 // At t=0, linearInterpolate should return g0 and at t=1 it returns g1.
 GradientVoxel GradientVolume::linearInterpolate(const GradientVoxel& g0, const GradientVoxel& g1, float factor)
 {
-    glm::vec3 dir = ((1.0f-factor) * g0.dir) + (factor * g1.dir);
+    glm::vec3 dir = g0.dir + factor * (g1.dir - g0.dir); //((1.0f-factor) * g0.dir) + (factor * g1.dir);
     float dist = g0.magnitude + factor * (g1.magnitude - g0.magnitude);     // probably correct?
     return GradientVoxel {dir, dist};
 }
