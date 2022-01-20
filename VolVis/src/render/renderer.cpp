@@ -291,16 +291,18 @@ glm::vec4 Renderer::traceRayComposite(const Ray& ray, float sampleStep) const
         float val = m_pVolume->getSampleInterpolate(samplePos);
         
         glm::vec4 tfVal = getTFValue(val);
-        glm::vec3 preMult = glm::vec3(tfVal) * tfVal.w;
+        glm::vec3 preMult = glm::vec3(tfVal); // * tfVal.a;
 
         
         if (m_config.volumeShading) {
             volume::GradientVoxel grad = m_pGradientVolume->getGradientInterpolate(samplePos);
             preMult = computePhongShading(preMult, grad, L, V);
         }
+
+        preMult = glm::vec3(tfVal) * tfVal.a;
         
         C_prime_accum = C_prime_accum + (1 - A_prime_accum) * preMult;
-        A_prime_accum = A_prime_accum + (1 - A_prime_accum) * tfVal.w;
+        A_prime_accum = A_prime_accum + (1 - A_prime_accum) * tfVal.a;
 
         if (std::abs(A_prime_accum - 1) < 0.01f)
             break;
@@ -325,7 +327,34 @@ glm::vec4 Renderer::getTFValue(float val) const
 // Use the getTF2DOpacity function that you implemented to compute the opacity according to the 2D transfer function.
 glm::vec4 Renderer::traceRayTF2D(const Ray& ray, float sampleStep) const
 {
-    return glm::vec4(0.0f);
+    glm::vec3 samplePos = ray.origin + ray.tmin * ray.direction;
+    const glm::vec3 increment = sampleStep * ray.direction;
+
+    float A_prime_accum = 0.0f;
+    glm::vec3 C_prime_accum { 0 };
+
+    glm::vec3 V = m_pCamera->position();
+    glm::vec3 L = V; // Light follows camera
+
+    for (float t = ray.tmin; t <= ray.tmax; t += sampleStep, samplePos += increment) {
+        float val = m_pVolume->getSampleInterpolate(samplePos);
+        volume::GradientVoxel grad = m_pGradientVolume->getGradientInterpolate(samplePos);
+        float curr_opacity = getTF2DOpacity(val, grad.magnitude);
+        glm::vec3 preMult = glm::vec3(m_config.TF2DColor);
+
+        if (m_config.volumeShading) {
+            preMult = computePhongShading(preMult, grad, L, V);
+        }
+
+        preMult = glm::vec3(m_config.TF2DColor) * curr_opacity;
+
+        C_prime_accum = C_prime_accum + (1 - A_prime_accum) * preMult;
+        A_prime_accum = A_prime_accum + (1 - A_prime_accum) * curr_opacity;
+
+        if (std::abs(A_prime_accum - 1) < 0.01f)
+            break;
+    }
+    return glm::vec4(C_prime_accum, A_prime_accum);
 }
 
 // ======= TODO: IMPLEMENT ========
@@ -337,7 +366,15 @@ glm::vec4 Renderer::traceRayTF2D(const Ray& ray, float sampleStep) const
 // The 2D transfer function settings can be accessed through m_config.TF2DIntensity and m_config.TF2DRadius.
 float Renderer::getTF2DOpacity(float intensity, float gradientMagnitude) const
 {
-    return 0.0f;
+    float intensity_distance = std::abs(m_config.TF2DIntensity - intensity);
+    if (intensity_distance >= m_config.TF2DRadius)
+        return 0.0f;
+    
+    // how far away the point is from the center of the triangle (0 is center, 1 is edge)
+    float intensity_factor = intensity_distance / m_config.TF2DRadius;
+    float threshold = intensity_factor * m_pGradientVolume->maxMagnitude();
+
+    return (1.0f - intensity_factor) * (std::max((gradientMagnitude - threshold) / m_pGradientVolume->maxMagnitude(), 0.0f));
 }
 
 // This function computes if a ray intersects with the axis-aligned bounding box around the volume.
