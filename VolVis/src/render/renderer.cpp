@@ -220,11 +220,11 @@ float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoV
         if (glm::abs(isoValue - m_config.isoValue) < 0.01f) 
            return mid;     
 
-        // sampled value bigger so we update left border
-        if (isoValue > m_config.isoValue)
+        // sampled value smaller than what we're looking for, so we update left border
+        if (isoValue < m_config.isoValue)
             t0 = mid;
 
-        // sampled value smaller so we update right border
+        // sampled value larger so we update right border
         else  
             t1 = mid;
     }
