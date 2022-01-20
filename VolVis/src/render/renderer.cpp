@@ -211,6 +211,9 @@ glm::vec4 Renderer::traceRayISO(const Ray& ray, float sampleStep) const
 //                        t1 <- where we are currently
 float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoValue) const
 {
+    if (m_pVolume->interpolationMode == volume::InterpolationMode::NearestNeighbour)
+        return t1; // don't try bisection when in NN interpolation mode
+
     float mid;
     for (int i = 0; i < 100; i++) {
         mid = t0 + (t1 - t0) / 2;
@@ -290,14 +293,14 @@ glm::vec4 Renderer::traceRayComposite(const Ray& ray, float sampleStep) const
         glm::vec4 tfVal = getTFValue(val);
         glm::vec3 preMult = glm::vec3(tfVal) * tfVal.w;
 
-        volume::GradientVoxel grad = m_pGradientVolume->getGradientInterpolate(samplePos);
-        if (m_config.volumeShading)
+        
+        if (m_config.volumeShading) {
+            volume::GradientVoxel grad = m_pGradientVolume->getGradientInterpolate(samplePos);
             preMult = computePhongShading(preMult, grad, L, V);
+        }
         
         C_prime_accum = C_prime_accum + (1 - A_prime_accum) * preMult;
         A_prime_accum = A_prime_accum + (1 - A_prime_accum) * tfVal.w;
-
-        
 
         if (std::abs(A_prime_accum - 1) < 0.01f)
             break;
