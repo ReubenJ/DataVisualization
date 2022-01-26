@@ -191,8 +191,14 @@ glm::vec4 Renderer::traceRayISO(const Ray& ray, float sampleStep) const
             float mid = bisectionAccuracy(ray, t0, t1, val);
             glm::vec3 V = m_pCamera->forward();
             glm::vec3 L = V; // Light follows camera
-            glm::vec3 new_samplePos = ray.origin + mid * ray.direction;
-            volume::GradientVoxel grad = m_pGradientVolume->getGradientInterpolate(new_samplePos);
+            volume::GradientVoxel grad;
+            if (m_config.isoRaycastBisect)
+                grad = m_pGradientVolume->getGradientInterpolate(samplePos);
+            else {
+                glm::vec3 new_samplePos = ray.origin + mid * ray.direction;
+                grad = m_pGradientVolume->getGradientInterpolate(new_samplePos);
+            }
+
             glm::vec3 shaded = computePhongShading(isoColor, grad, L, V);
 
             return glm::vec4(shaded, 1.0f);
@@ -215,7 +221,7 @@ float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoV
         return t1; // don't try bisection when in NN interpolation mode
 
     float mid;
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < m_config.bisectLimit; i++) {
         mid = t0 + (t1 - t0) / 2;
         isoValue = m_pVolume->getSampleInterpolate(ray.origin + mid * ray.direction);
 

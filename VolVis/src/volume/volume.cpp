@@ -238,7 +238,7 @@ float Volume::biCubicInterpolate(const glm::vec2& xyCoord, int z) const
 float Volume::getSampleTriCubicInterpolation(const glm::vec3& coord) const
 {
     // check if the coordinate is within volume boundaries, -1 and +1 for the 2 extra sample points
-    if (glm::any(glm::lessThan(coord - 1.0f, glm::vec3(0))) || glm::any(glm::greaterThanEqual(coord + 1.0f, glm::vec3(m_dim))))
+    if (glm::any(glm::lessThan(coord - 2.0f, glm::vec3(0))) || glm::any(glm::greaterThanEqual(coord + 2.0f, glm::vec3(m_dim))))
         return 0.0f;
     
     // Get four points to cubicly interpolate

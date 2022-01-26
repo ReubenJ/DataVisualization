@@ -135,6 +135,14 @@ void Menu::showRayCastTab(std::chrono::duration<double> renderTime)
 
         ImGui::NewLine();
 
+        ImGui::Checkbox("IsoSurface Bisection", &m_renderConfig.isoRaycastBisect);
+
+        ImGui::NewLine();
+
+        ImGui::DragInt("Bisect Iteration Limit", &m_renderConfig.bisectLimit, 10, 10, 5000, "%d times");
+
+        ImGui::NewLine();
+
         ImGui::Checkbox("Volume Shading", &m_renderConfig.volumeShading);
 
         ImGui::NewLine();
