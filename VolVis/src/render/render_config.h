@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <cstring> // memcmp  // macOS change TH
 
@@ -22,7 +23,12 @@ struct RenderConfig {
     bool isoRaycastBisect { true };
     int bisectLimit { 100 };
     float isoValue { 95.0f };
+    glm::vec3 isoColor { 0.2f, 0.8f, 0.2f };
+    bool isoShadows { true };
     float triCubicParam { -1.0f };
+
+    glm::vec3 lightDirection {0.f, -5000.f, 0.f};
+    glm::vec3 lightColour {1.f, 1.f, 1.f};
 
     // 1D transfer function.
     std::array<glm::vec4, 256> tfColorMap;

@@ -175,7 +175,7 @@ glm::vec4 Renderer::traceRayMIP(const Ray& ray, float sampleStep) const
 // Use the bisectionAccuracy function (to be implemented) to get a more precise isosurface location between two steps.
 glm::vec4 Renderer::traceRayISO(const Ray& ray, float sampleStep) const
 {
-    static constexpr glm::vec3 isoColor { 0.8f, 0.8f, 0.2f };
+    glm::vec3 isoColor = m_config.isoColor; // { 0.8f, 0.8f, 0.2f };
 
     // Incrementing samplePos directly instead of recomputing it each frame gives a measureable speed-up.
     glm::vec3 samplePos = ray.origin + ray.tmin * ray.direction;
@@ -190,22 +190,52 @@ glm::vec4 Renderer::traceRayISO(const Ray& ray, float sampleStep) const
             float t1 = t;                 // at hitpoint
             float mid = bisectionAccuracy(ray, t0, t1, val);
             glm::vec3 V = m_pCamera->forward();
-            glm::vec3 L = V; // Light follows camera
+            glm::vec3 L = m_config.lightDirection;
             volume::GradientVoxel grad;
+            glm::vec3 samplePosToUse = samplePos;
             if (!m_config.isoRaycastBisect)
-                grad = m_pGradientVolume->getGradientInterpolate(samplePos);
+                grad = m_pGradientVolume->getGradientInterpolate(samplePosToUse);
             else {
-                glm::vec3 new_samplePos = ray.origin + mid * ray.direction;
-                grad = m_pGradientVolume->getGradientInterpolate(new_samplePos);
+                samplePosToUse = ray.origin + mid * ray.direction;
+                grad = m_pGradientVolume->getGradientInterpolate(samplePosToUse);
             }
 
-            glm::vec3 shaded = computePhongShading(isoColor, grad, L, V);
+            if (m_config.isoShadows) {
+                // Cast a ray from the hitpoint back to the light to see if it's blocked from the light
+                Ray shadowRay = generateShadowRay(samplePosToUse, -L, 0.005f);
+
+                glm::vec3 shadowSamplePos = shadowRay.origin + shadowRay.tmin * shadowRay.direction;
+                const glm::vec3 shadowIncrement = sampleStep * shadowRay.direction * 0.25f;
+                for (float shadow_t = shadowRay.tmin; shadow_t <= shadowRay.tmax; shadow_t += sampleStep, shadowSamplePos += shadowIncrement) {
+                    const float shadowVal = m_pVolume->getSampleInterpolate(shadowSamplePos);
+                    if (shadowVal >= m_config.isoValue) {
+                        isoColor = glm::vec3(0.05f);
+                        break;
+                    }
+                }
+            }
+
+            glm::vec3 lightColour = m_config.lightColour;
+
+            glm::vec3 shaded = computePhongShading(isoColor, lightColour, grad, L, V);
 
             return glm::vec4(shaded, 1.0f);
         }
     }
 
     return glm::vec4(0);
+}
+
+Ray Renderer::generateShadowRay(glm::vec3 origin, glm::vec3 lightPosition, float bias)
+{
+    Ray ray;
+    ray.origin = origin;
+    ray.direction = lightPosition - origin;
+    ray.direction = glm::normalize(ray.direction);
+
+    ray.tmin = bias;
+    ray.tmax = 300;
+    return ray;
 }
 
 // ======= TODO: IMPLEMENT ========
@@ -248,20 +278,19 @@ float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoV
 //
 // Use the given color for the ambient/specular/diffuse (you are allowed to scale these constants by a scalar value).
 // You are free to choose any specular power that you'd like.
-glm::vec3 Renderer::computePhongShading(const glm::vec3& color, const volume::GradientVoxel& gradient, const glm::vec3& L, const glm::vec3& V)
+glm::vec3 Renderer::computePhongShading(const glm::vec3& color, const glm::vec3& lightColour, const volume::GradientVoxel& gradient,
+                                        const glm::vec3& L, const glm::vec3& V)
 {
     if (glm::all(glm::equal(gradient.dir, glm::vec3(0))))
         return glm::vec3(0);
     
     // Phong weights
-    float k_a = 0.1f;
+    float k_a = 0.2f;
     float k_d = 0.7f;
-    float k_s = 0.2f;
+    float k_s = 0.1f;
 
     // Phong exponent
     float alpha = 100.0f;
-
-    glm::vec3 lightColour = glm::vec3(1);
 
     // Ambient component
     glm::vec3 ambientComponent = k_a * (lightColour * color);
@@ -271,10 +300,12 @@ glm::vec3 Renderer::computePhongShading(const glm::vec3& color, const volume::Gr
     glm::vec3 diffuseComponent = k_d * (lightColour * color) * cosTheta;
 
     // Specular component
+    glm::vec3 spec_color {1.f};
     float theta = std::acos(cosTheta);
-    float phi = theta * 2; // only works since the light follows the camera!!
+    float angleCameraToLight = std::acos(glm::dot(glm::normalize(L), glm::normalize(V)));
+    float phi = angleCameraToLight - (theta * 2); // works for any light position // only works since the light follows the camera!!
     float cosPhi = std::cos(phi);
-    glm::vec3 specularComponent = k_s * (lightColour * color) * glm::pow(cosPhi, alpha);
+    glm::vec3 specularComponent = k_s * (spec_color * color) * glm::pow(cosPhi, alpha);
 
     return ambientComponent + diffuseComponent + specularComponent;
 }
@@ -301,7 +332,7 @@ glm::vec4 Renderer::traceRayComposite(const Ray& ray, float sampleStep) const
         
         if (m_config.volumeShading) {
             volume::GradientVoxel grad = m_pGradientVolume->getGradientInterpolate(samplePos);
-            preMult = computePhongShading(preMult, grad, L, V);
+            preMult = computePhongShading(preMult, m_config.lightColour, grad, L, V);
         }
 
         preMult = glm::vec3(tfVal) * tfVal.a;
@@ -348,7 +379,7 @@ glm::vec4 Renderer::traceRayTF2D(const Ray& ray, float sampleStep) const
         glm::vec3 preMult = glm::vec3(m_config.TF2DColor);
 
         if (m_config.volumeShading) {
-            preMult = computePhongShading(preMult, grad, L, V);
+            preMult = computePhongShading(preMult, m_config.lightColour, grad, L, V);
         }
 
         preMult = glm::vec3(m_config.TF2DColor) * curr_opacity;
