@@ -73,6 +73,14 @@ int main(int argc, char** argv)
         redrawUserInteraction = true;
     };
 
+    if (argc == 2) {
+        auto initial_load = std::filesystem::path(argv[1]);
+        if (std::filesystem::exists(initial_load) && initial_load.extension() == ".fld"){
+            loadVolume(std::filesystem::path(argv[1]));
+        } else
+            std::cerr<< "Cannot load the file: " << argv[1] << std::endl << "Make sure the file exists and is a .fld file.";
+    }
+
     // Callbacks.
     volVisMenu.setLoadVolumeCallback(loadVolume);
     volVisMenu.setRenderConfigChangedCallback(
