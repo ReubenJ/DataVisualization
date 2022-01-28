@@ -257,7 +257,7 @@ float Volume::getSampleTriCubicInterpolation(const glm::vec3& coord) const
     float z2_interpolation = biCubicInterpolate(xyCoord, z2);
     float z3_interpolation = biCubicInterpolate(xyCoord, z3);
 
-    // lin interpolate between four results
+    // cubic interpolate between four results
     float result = cubicInterpolate(z0_interpolation, z1_interpolation, z2_interpolation, z3_interpolation, coord.z - static_cast<float>(z1), cubicKernelParameter);
 
     return result;
