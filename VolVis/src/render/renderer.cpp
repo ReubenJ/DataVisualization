@@ -192,7 +192,7 @@ glm::vec4 Renderer::traceRayISO(const Ray& ray, float sampleStep) const
             glm::vec3 V = m_pCamera->forward();
             glm::vec3 L = V; // Light follows camera
             volume::GradientVoxel grad;
-            if (m_config.isoRaycastBisect)
+            if (!m_config.isoRaycastBisect)
                 grad = m_pGradientVolume->getGradientInterpolate(samplePos);
             else {
                 glm::vec3 new_samplePos = ray.origin + mid * ray.direction;
@@ -213,7 +213,7 @@ glm::vec4 Renderer::traceRayISO(const Ray& ray, float sampleStep) const
 // closely matches the iso value (less than 0.01 difference). Add a limit to the number of
 // iterations such that it does not get stuck in degerate cases.
 // eye---t0---t0+offset---t1---
-//        |---isoValue--|  <- somewhere in between   
+//        |---isoValue--|  <- somewhere in between
 //                        t1 <- where we are currently
 float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoValue) const
 {
@@ -226,8 +226,8 @@ float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoV
         isoValue = m_pVolume->getSampleInterpolate(ray.origin + mid * ray.direction);
 
         // sampled value within acceptable thresholds
-        if (glm::abs(isoValue - m_config.isoValue) < 0.01f) 
-           return mid;     
+        if (glm::abs(isoValue - m_config.isoValue) < 0.001f)
+            return mid;
 
         // sampled value smaller than what we're looking for, so we update left border
         if (isoValue < m_config.isoValue)
@@ -237,7 +237,7 @@ float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoV
         else  
             t1 = mid;
     }
-    
+
     return mid;
 }
 
@@ -270,14 +270,13 @@ glm::vec3 Renderer::computePhongShading(const glm::vec3& color, const volume::Gr
     float cosTheta = glm::dot(glm::normalize(L), glm::normalize(gradient.dir));
     glm::vec3 diffuseComponent = k_d * (lightColour * color) * cosTheta;
 
-
     // Specular component
     float theta = std::acos(cosTheta);
     float phi = theta * 2; // only works since the light follows the camera!!
     float cosPhi = std::cos(phi);
     glm::vec3 specularComponent = k_s * (lightColour * color) * glm::pow(cosPhi, alpha);
 
-    return ambientComponent  + diffuseComponent + specularComponent;
+    return ambientComponent + diffuseComponent + specularComponent;
 }
 
 // ======= TODO: IMPLEMENT ========

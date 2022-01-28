@@ -22,6 +22,7 @@ struct RenderConfig {
     bool isoRaycastBisect { true };
     int bisectLimit { 100 };
     float isoValue { 95.0f };
+    float triCubicParam { -1.0f };
 
     // 1D transfer function.
     std::array<glm::vec4, 256> tfColorMap;

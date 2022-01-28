@@ -30,6 +30,7 @@ public:
 
     float getSampleInterpolate(const glm::vec3& coord) const;
     float getVoxel(int x, int y, int z) const;
+    float cubicKernelParameter;
 
 protected:
     float getSampleNearestNeighbourInterpolation(const glm::vec3& coord) const;
@@ -40,8 +41,8 @@ protected:
 
     float getSampleTriCubicInterpolation(const glm::vec3& coord) const;
     float biCubicInterpolate(const glm::vec2& xyCoord, int z) const;
-    static float cubicInterpolate(float g0, float g1, float g2, float g3, float factor);
-    static float weight(float x);
+    static float cubicInterpolate(float g0, float g1, float g2, float g3, float factor, float kernel);
+    static float weight(float x, float kernel);
 
 private:
     void loadFile(const std::filesystem::path& file);

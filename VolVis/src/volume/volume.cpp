@@ -10,6 +10,7 @@
 #include <gsl/span>
 #include <iostream>
 #include <string>
+#include <tbb/parallel_for.h>
 
 struct Header {
     glm::ivec3 dim;
@@ -174,14 +175,14 @@ float Volume::biLinearInterpolate(const glm::vec2& xyCoord, int z) const
 
 // ======= OPTIONAL : This functions can be used to implement cubic interpolation ========
 // This function represents the h(x) function, which returns the weight of the cubic interpolation kernel for a given position x
-float Volume::weight(float x)
+float Volume::weight(float x, float kernel)
 {
-    const float a = -1.0; // kernel parameter
+    const float a = kernel; // kernel parameter
     float abs_x = glm::abs(x);
     
     
-    float xpow3 = glm::pow(abs_x, 3.0f);
-    float xpow2 = glm::pow(abs_x, 2.0f);
+    float xpow3 = abs_x * abs_x * abs_x; // glm::pow(abs_x, 3.0f);
+    float xpow2 = abs_x * abs_x; // glm::pow(abs_x, 2.0f);
     if (abs_x >= 0.0f && abs_x < 1.0f) {
         return (a + 2.0f) * xpow3 - (a + 3.0f) * xpow2 + 1.0f;
     } else if (abs_x >= 1.0f && abs_x < 2.0f) {
@@ -195,12 +196,12 @@ float Volume::weight(float x)
 // g0-----------g1--X--------g2-----------g3
 //                 factor
 // factor of 0 means exactly g1 and factor of 1 means exactly g2
-float Volume::cubicInterpolate(float g0, float g1, float g2, float g3, float factor)
+float Volume::cubicInterpolate(float g0, float g1, float g2, float g3, float factor, float kernel)
 {
-    float w0 = weight(-1.0f - factor);
-    float w1 = weight(-factor);
-    float w2 = weight(1-factor);
-    float w3 = weight(1.0f + (1.0f - factor));
+    float w0 = weight(-1.0f - factor, kernel);
+    float w1 = weight(-factor, kernel);
+    float w2 = weight(1-factor, kernel);
+    float w3 = weight(1.0f + (1.0f - factor), kernel);
 
     return w0 * g0 + w1 * g1 + w2 * g2 + w3 * g3;
 }
@@ -224,20 +225,20 @@ float Volume::biCubicInterpolate(const glm::vec2& xyCoord, int z) const
     float x1f = static_cast<float>(x1);
 
     // cubic interpolation across x axis for 4 different y levels
-    float x_y0 = cubicInterpolate(getVoxel(x0, y0, z), getVoxel(x1, y0, z), getVoxel(x2, y0, z), getVoxel(x3, y0, z), xyCoord.x - x1f);
-    float x_y1 = cubicInterpolate(getVoxel(x0, y1, z), getVoxel(x1, y1, z), getVoxel(x2, y1, z), getVoxel(x3, y1, z), xyCoord.x - x1f);
-    float x_y2 = cubicInterpolate(getVoxel(x0, y2, z), getVoxel(x1, y2, z), getVoxel(x2, y2, z), getVoxel(x3, y2, z), xyCoord.x - x1f);
-    float x_y3 = cubicInterpolate(getVoxel(x0, y3, z), getVoxel(x1, y3, z), getVoxel(x2, y3, z), getVoxel(x3, y3, z), xyCoord.x - x1f);
+    float x_y0 = cubicInterpolate(getVoxel(x0, y0, z), getVoxel(x1, y0, z), getVoxel(x2, y0, z), getVoxel(x3, y0, z), xyCoord.x - x1f, cubicKernelParameter);
+    float x_y1 = cubicInterpolate(getVoxel(x0, y1, z), getVoxel(x1, y1, z), getVoxel(x2, y1, z), getVoxel(x3, y1, z), xyCoord.x - x1f, cubicKernelParameter);
+    float x_y2 = cubicInterpolate(getVoxel(x0, y2, z), getVoxel(x1, y2, z), getVoxel(x2, y2, z), getVoxel(x3, y2, z), xyCoord.x - x1f, cubicKernelParameter);
+    float x_y3 = cubicInterpolate(getVoxel(x0, y3, z), getVoxel(x1, y3, z), getVoxel(x2, y3, z), getVoxel(x3, y3, z), xyCoord.x - x1f, cubicKernelParameter);
 
     // cubic interpolation across 4 different y levels
-    return cubicInterpolate(x_y0, x_y1, x_y2, x_y3, xyCoord.y - static_cast<float>(y1));
+    return cubicInterpolate(x_y0, x_y1, x_y2, x_y3, xyCoord.y - static_cast<float>(y1), cubicKernelParameter);
 }
 
 // ======= OPTIONAL : This functions can be used to implement cubic interpolation ========
 // This function computes the tricubic interpolation at coord
 float Volume::getSampleTriCubicInterpolation(const glm::vec3& coord) const
 {
-    // check if the coordinate is within volume boundaries, -1 and +1 for the 2 extra sample points
+    // check if the coordinate is within volume boundaries, -2 and +2 for the 2 extra sample points
     if (glm::any(glm::lessThan(coord - 2.0f, glm::vec3(0))) || glm::any(glm::greaterThanEqual(coord + 2.0f, glm::vec3(m_dim))))
         return 0.0f;
     
@@ -254,7 +255,7 @@ float Volume::getSampleTriCubicInterpolation(const glm::vec3& coord) const
     float z3_interpolation = biCubicInterpolate(xyCoord, z3);
 
     // lin interpolate between four results
-    float result = cubicInterpolate(z0_interpolation, z1_interpolation, z2_interpolation, z3_interpolation, coord.z - static_cast<float>(z1));
+    float result = cubicInterpolate(z0_interpolation, z1_interpolation, z2_interpolation, z3_interpolation, coord.z - static_cast<float>(z1), cubicKernelParameter);
 
     return result;
 }
