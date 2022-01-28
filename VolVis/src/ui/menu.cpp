@@ -52,6 +52,7 @@ void Menu::setLoadedVolume(const volume::Volume& volume, const volume::GradientV
 {
     m_tfWidget = TransferFunctionWidget(volume);
     m_tf2DWidget = TransferFunction2DWidget(volume, gradientVolume);
+    m_lightWidget = LightWidget(m_renderConfig);
 
     m_tfWidget->updateRenderConfig(m_renderConfig);
     m_tf2DWidget->updateRenderConfig(m_renderConfig);
@@ -80,6 +81,7 @@ void Menu::drawMenu(const glm::ivec2& pos, const glm::ivec2& size, std::chrono::
         showRayCastTab(renderTime);
         showTransFuncTab();
         show2DTransFuncTab();
+        showLightingTab();
 
         if (m_renderConfig != renderConfigBefore)
             callRenderConfigChangedCallback();
@@ -151,6 +153,14 @@ void Menu::showRayCastTab(std::chrono::duration<double> renderTime)
 
         ImGui::NewLine();
 
+        ImGui::InputFloat3("Iso Colour", &m_renderConfig.isoColor.r);
+
+        ImGui::NewLine();
+
+        ImGui::Checkbox("Iso Shadows", &m_renderConfig.isoShadows);
+
+        ImGui::NewLine();
+
         ImGui::DragFloat("Resolution scale", &m_resolutionScale, 0.0025f, 0.25f, 2.0f);
         m_renderConfig.renderResolution = glm::ivec2(glm::vec2(m_baseRenderResolution) * m_resolutionScale);
 
@@ -186,6 +196,15 @@ void Menu::show2DTransFuncTab()
     if (ImGui::BeginTabItem("2D transfer function")) {
         m_tf2DWidget->draw();
         m_tf2DWidget->updateRenderConfig(m_renderConfig);
+        ImGui::EndTabItem();
+    }
+}
+
+void Menu::showLightingTab()
+{
+    if (ImGui::BeginTabItem("Lighting")) {
+        m_lightWidget->draw();
+        m_lightWidget->updateRenderConfig(m_renderConfig);
         ImGui::EndTabItem();
     }
 }
