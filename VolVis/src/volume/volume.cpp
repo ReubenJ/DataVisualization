@@ -127,15 +127,16 @@ float Volume::getSampleTriLinearInterpolation(const glm::vec3& coord) const
         return 0.0f;
 
     // Get two points to bilinearly interpolate
-    int low_z = static_cast<int>(glm::floor(coord.z));
-    int high_z = static_cast<int>(glm::ceil(coord.z));
+    float low_z_f = glm::floor(coord.z);
+    int low_z = static_cast<int>(low_z_f);
+    int high_z = static_cast<int>(ceil(coord.z));
 
     glm::vec2 xyCoord{coord.x, coord.y};
     float low_zInterpolation = biLinearInterpolate(xyCoord, low_z);
     float high_zInterpolation = biLinearInterpolate(xyCoord, high_z);
 
     // lin interpolate between two results
-    float result = linearInterpolate(low_zInterpolation, high_zInterpolation, coord.z - low_z);
+    float result = linearInterpolate(low_zInterpolation, high_zInterpolation, coord.z - low_z_f);
 
     return result;
 }
@@ -152,10 +153,12 @@ float Volume::linearInterpolate(float g0, float g1, float factor)
 // This function bi-linearly interpolates the value at the given continuous 2D XY coordinate for a fixed integer z coordinate.
 float Volume::biLinearInterpolate(const glm::vec2& xyCoord, int z) const
 {
-    int tx = static_cast<int>(glm::ceil(xyCoord.x));
-    int ty = static_cast<int>(glm::ceil(xyCoord.y));
-    int bx = static_cast<int>(glm::floor(xyCoord.x));
-    int by = static_cast<int>(glm::floor(xyCoord.y));
+    int tx = static_cast<int>(ceil(xyCoord.x));
+    int ty = static_cast<int>(ceil(xyCoord.y));
+    float bx_f = glm::floor(xyCoord.x);
+    int bx = static_cast<int>(bx_f);
+    float by_f = glm::floor(xyCoord.y);
+    int by = static_cast<int>(by_f);
 
     float tx_ty = getVoxel(tx, ty, z);
     float tx_by = getVoxel(tx, by, z);
@@ -163,11 +166,11 @@ float Volume::biLinearInterpolate(const glm::vec2& xyCoord, int z) const
     float bx_by = getVoxel(bx, by, z);
 
     // Between tx_ty and bx_ty
-    float topPoint = linearInterpolate(bx_ty, tx_ty, xyCoord.x - bx);
-    float botPoint = linearInterpolate(bx_by, tx_by, xyCoord.x - bx);
+    float topPoint = linearInterpolate(bx_ty, tx_ty, xyCoord.x - bx_f);
+    float botPoint = linearInterpolate(bx_by, tx_by, xyCoord.x - bx_f);
 
     // Between topPoint botPoint
-    float returnPoint = linearInterpolate(botPoint, topPoint, xyCoord.y - by);
+    float returnPoint = linearInterpolate(botPoint, topPoint, xyCoord.y - by_f);
     
     return returnPoint;
 }
@@ -211,16 +214,16 @@ float Volume::cubicInterpolate(float g0, float g1, float g2, float g3, float fac
 float Volume::biCubicInterpolate(const glm::vec2& xyCoord, int z) const
 {
     // Four x sample points
-    int x0 = static_cast<int>(glm::floor(xyCoord.x) - 1);
-    int x1 = static_cast<int>(glm::floor(xyCoord.x));
-    int x2 = static_cast<int>(glm::ceil(xyCoord.x));
-    int x3 = static_cast<int>(glm::ceil(xyCoord.x) + 1);
+    int x0 = static_cast<int>(floor(xyCoord.x) - 1);
+    int x1 = static_cast<int>(floor(xyCoord.x));
+    int x2 = static_cast<int>(ceil(xyCoord.x));
+    int x3 = static_cast<int>(ceil(xyCoord.x) + 1);
 
     // 4 y sample points
-    int y0 = static_cast<int>(glm::floor(xyCoord.y) - 1);
-    int y1 = static_cast<int>(glm::floor(xyCoord.y));
-    int y2 = static_cast<int>(glm::ceil(xyCoord.y));
-    int y3 = static_cast<int>(glm::ceil(xyCoord.y) + 1);
+    int y0 = static_cast<int>(floor(xyCoord.y) - 1);
+    int y1 = static_cast<int>(floor(xyCoord.y));
+    int y2 = static_cast<int>(ceil(xyCoord.y));
+    int y3 = static_cast<int>(ceil(xyCoord.y) + 1);
 
     float x1f = static_cast<float>(x1);
 
@@ -243,10 +246,10 @@ float Volume::getSampleTriCubicInterpolation(const glm::vec3& coord) const
         return 0.0f;
     
     // Get four points to cubicly interpolate
-    int z0 = static_cast<int>(glm::floor(coord.z)) - 1;
-    int z1 = static_cast<int>(glm::floor(coord.z));
-    int z2 = static_cast<int>(glm::ceil(coord.z));
-    int z3 = static_cast<int>(glm::ceil(coord.z)) + 1;
+    int z0 = static_cast<int>(floor(coord.z)) - 1;
+    int z1 = static_cast<int>(floor(coord.z));
+    int z2 = static_cast<int>(ceil(coord.z));
+    int z3 = static_cast<int>(ceil(coord.z)) + 1;
 
     glm::vec2 xyCoord{coord.x, coord.y};
     float z0_interpolation = biCubicInterpolate(xyCoord, z0);

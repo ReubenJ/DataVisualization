@@ -220,7 +220,7 @@ float Renderer::bisectionAccuracy(const Ray& ray, float t0, float t1, float isoV
     if (m_pVolume->interpolationMode == volume::InterpolationMode::NearestNeighbour)
         return t1; // don't try bisection when in NN interpolation mode
 
-    float mid;
+    float mid = t0 + (t1 - t0) / 2;
     for (int i = 0; i < m_config.bisectLimit; i++) {
         mid = t0 + (t1 - t0) / 2;
         isoValue = m_pVolume->getSampleInterpolate(ray.origin + mid * ray.direction);

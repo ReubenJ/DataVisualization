@@ -179,7 +179,7 @@ int main(int argc, char** argv)
 
             // Draw on the left side of the screen next to the menu.
             const glm::ivec2 borders = ((windowSize - glm::ivec2(menuWidth, 0) - baseRenderResolution)) / 2;
-            glViewport(borders.x, borders.y, GLsizei(baseRenderResolution.x * dpiScaling.x), GLsizei(baseRenderResolution.y * dpiScaling.y));
+            glViewport(borders.x, borders.y, GLsizei(static_cast<float>(baseRenderResolution.x) * dpiScaling.x), GLsizei(static_cast<float>(baseRenderResolution.y) * dpiScaling.y));
 
             // Enable depth testing and clear the color/depth buffers.
             glEnable(GL_DEPTH_TEST);

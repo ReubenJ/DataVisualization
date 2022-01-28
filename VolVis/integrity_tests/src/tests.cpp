@@ -27,8 +27,8 @@ Renderer:
 
 TEST_CASE("Volume Tests")
 {
-    REQUIRE_NOTHROW(TestVolume::test_weight(0.f));
-    REQUIRE_NOTHROW(TestVolume::test_cubicInterpolate(0.f, 0.f, 0.f, 0.f, 0.f));
+    REQUIRE_NOTHROW(TestVolume::test_weight(0.f, -0.5f));
+    REQUIRE_NOTHROW(TestVolume::test_cubicInterpolate(0.f, 0.f, 0.f, 0.f, 0.f, -0.5f));
 
     const TestVolume volume { std::vector<uint16_t>(125, 0), glm::ivec3(5) };
     REQUIRE_NOTHROW(volume.test_linearInterpolate(0.0f, 1.0f, 0.5f));
